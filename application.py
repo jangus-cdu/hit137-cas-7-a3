@@ -12,12 +12,16 @@ class Application(tk.Frame):
         """
         Initializes the Application frame.
 
-        Initializes the application, setting the master window and packing the frame. It also calls the create_widgets method to set up the GUI components.
+        Initializes the application, setting the master window and packing the 
+        frame. It also calls the create_widgets method to set up the GUI 
+        components.
 
         Parameters:
-            master (tk.Tk, optional): The root window or master widget. Defaults to None.
+            master (tk.Tk, optional): The root window or master widget. 
+            Defaults to None.
 
-        Sets up the master window, packs the frame, and initializes the GUI components by calling create_widgets.
+        Sets up the master window, packs the frame, and initializes the GUI 
+        components by calling create_widgets.
         """
 
         super().__init__(master)
@@ -29,7 +33,8 @@ class Application(tk.Frame):
         """
         Creates the GUI components.
 
-        Creates a single "QUIT" button with red text, which destroys the master window when clicked. The button is packed at the bottom of the frame.
+        Creates a single "QUIT" button with red text, which destroys the master 
+        window when clicked. The button is packed at the bottom of the frame.
         """
         self.quit_button = tk.Button(
             self, text="QUIT", fg="red", command=self.master.destroy)
@@ -37,6 +42,9 @@ class Application(tk.Frame):
 
     def run(self):
         """
-        Starts the application's main event loop, which waits for user interactions and updates the GUI.
+        Starts the application's main event loop, which waits for user 
+        interactions and updates the GUI.
         """
+        print("Application.run() - before 'mainloop()'.")
         self.mainloop()
+        print("Application.run() - after 'mainloop()'.")
