@@ -15,6 +15,8 @@ from os import name
 import tkinter as tk
 import application
 
+# TODO: Create skeleton for Model View Controller (MVC) functionality
+
 
 def main():
     print("HIT137 - Group Assignment 3")
