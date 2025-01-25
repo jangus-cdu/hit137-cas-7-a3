@@ -17,11 +17,22 @@ class ImageController:
         self.model = model  # Instance of ImageModel.
         self.view = view  # Instance of ImageView.
         self.bind_events()
-        self.view.button.config(command=self.update_name)
+
+    def bind_events(self):
+        # Bind UI events to controller methods
+        self.view.set_img_path_button.config(command=self.set_img_path)
+        self.view.load_img_button.config(command=self.load_image)
+        self.view.open_image_file_button.config(command=self.load_image)
 
     def load_image(self):
         # Handle loading image
-        pass
+        image_dir = self.model.get_image_dir()
+        image_path = self.view.open_image_file(start_path=image_dir)
+        self.model.set_image_path(image_path)
+        # path = self.model.get_image_path()
+        self.model.load_image(image_path)
+        image = self.model.get_image()
+        self.view.display_image(image)
 
     def save_image(self):
         # Handle saving image
@@ -39,11 +50,7 @@ class ImageController:
         # Handle rotating image
         pass
 
-    def bind_events(self):
-        # Bind UI events to controller methods
-        pass
-
-    def update_name(self):
-        name = self.view.get_input()
-        self.model.set_name(name)
-        self.view.set_display(f"Hello, {self.model.get_name()}!")
+    def set_img_path(self):
+        path = self.view.get_input()
+        self.model.set_image_path(path)
+        self.view.set_display(f"Image path: {self.model.get_image_path()}!")
