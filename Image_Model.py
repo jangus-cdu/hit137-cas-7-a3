@@ -1,8 +1,9 @@
+# Image Model Class
 # The Model represents the data and the business logic of the application.
 # It is responsible for managing the data and the rules of the application.
 # The Model is independent of the user interface and the user input.
-# It notifies the View when the data changes, so the View can update itself
-# accordingly.
+# It notifies the View (via the Controller) when the data changes, so the View
+# can update itself accordingly.
 
 import os
 from PIL import Image, ImageTk
