@@ -8,7 +8,7 @@ Yoana Vasileva - S263707
 HIT137 Assignment 3 - Image Editor
 File: main.py
 
-This is the main file for the Assignment 3 GUI.
+This is the main file for the Assignment 3 Image Editor Application.
 """
 
 import tkinter as tk
