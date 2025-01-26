@@ -15,66 +15,98 @@ class ImageView:
 
     def __init__(self, root):
         self.root = root  # The main Tkinter window.
-        self.root.title("MVC Example - ImageView")
-        self.canvas = None  # Canvas widget to display the image.
+        self.root.title("Main Window - ImageView")
+        self.main_window_width = 800  # Width of the main window.
+        self.main_window_height = 600  # Height of the main window.
+        self.menu_frame = None  # Frame for the menu.
         self.controls_frame = None  # Frame for control buttons.
-        self.open_image_file_button = None  # Button to open a file.
-        self.image_label = None  # Label to display the image.
+        self.status_bar_frame = None  # Frame for the status bar.
+        self.image_frame_orignial = None  # Frame for the original image.
+        self.image_frame_edited = None  # Frame for the deited image.
+
+        # Buttons
+        self.file_menu_button = None  # Button to open the file menu.
+        self.open_image_button = None  # Button to open a file.
+        self.crop_image_button = None  # Button to crop the image.
+        self.rotate_image_button = None  # Button to rotate the image.
+        self.quit_button = None  # Button to quit the application.
+
+        # Labels
+        self.image_label_original = None  # Original image.
+        self.image_label_edited = None  # Edited image.
         self.image_path = None  # Path to the image file.
+        self.image_status_label = None  # Label to display the image status.
         self.create_widgets()
 
     # Initialize and place widgets
     def create_widgets(self):
+        # Main window
+        self.root.config(width=self.main_window_width,
+                         height=self.main_window_height, bg="skyblue")
+
+        # Create frames
+        self.menu_frame = tk.Frame(self.root, bg="lightgrey")
+        self.menu_frame.pack(side="top", padx=5, pady=5, fill="x")
+
+        self.controls_frame = tk.Frame(self.root, bg="lightgrey")
+        self.controls_frame.pack(side="left")
+
+        self.image_frame_original = tk.Frame(
+            self.root, width=200, height=200, bg="lightpink")
+        self.image_frame_original.pack(padx=5, pady=5, side="left")
+
+        self.image_frame_edited = tk.Frame(
+            self.root, width=200, height=200, bg="lightseagreen")
+        self.image_frame_edited.pack(side="right", padx=5, pady=5)
+
+        self.status_bar_frame = tk.Frame(
+            self.root, bd=1, relief=tk.SUNKEN, bg="lightgoldenrod1")
+        self.status_bar_frame.pack(side="bottom", padx=5, pady=5, fill="x")
 
         # Create buttons
-        self.label = tk.Label(self.root, text="Enter Image filename:")
-        self.label.pack()
+        self.open_image_button = tk.Button(
+            self.controls_frame, text="Open Image")
+        self.open_image_button.pack()
 
-        self.entry = tk.Entry(self.root)
-        self.entry.pack()
+        self.save_image_button = tk.Button(
+            self.controls_frame, text="Save Image")
+        self.save_image_button.pack()
 
-        self.set_img_path_button = tk.Button(self.root, text="Set Image Path")
-        self.set_img_path_button.pack()
+        self.crop_image_button = tk.Button(
+            self.controls_frame, text="Crop Image")
+        self.crop_image_button.pack()
 
-        self.open_image_file_button = tk.Button(
-            self.root, text="Open Image File")
-        self.open_image_file_button.pack()
-
-        self.display = tk.Label(self.root, text="")
-        self.display.pack()
-
-        self.load_img_button = tk.Button(self.root, text="Load Image")
-        self.load_img_button.pack()
-
-        self.controls_frame = tk.Frame(self.root)
-        self.controls_frame.pack()
-
-        self.image_canvas = tk.Canvas(
-            self.controls_frame, bg="yellow", height=350, width=350, name="image_canvas")
-        self.image_canvas.pack()
-
-        # Create a label to display the image once loaded and supplied by the Model
-        self.image_label = tk.Label(
-            self.image_canvas, text="Image_Label")
-        self.image_label.pack()
+        self.rotate_image_button = tk.Button(
+            self.controls_frame, text="Rotate Image")
+        self.rotate_image_button.pack()
 
         self.quit_button = tk.Button(
             self.controls_frame, text="QUIT", fg="red", command=self.root.destroy)
         self.quit_button.pack()
 
-    # def load_image(self, image_path):
-    #     # Load image from file
-    #     print(f"Image_View.load_image(): Loading image from: {image_path}")
-    #     if self.image_path is None:
-    #         return
-    #     image = ImageTk.PhotoImage(Image.open(image_path))
-    #     self.image_label.image = image  # keep a reference so the image doesn't disappear!
+        # Create a label to display the image once loaded and supplied by the Model
+        self.image_label_original = tk.Label(
+            self.image_frame_original, text="Image_Label_Original", bg="lightgrey")
+        self.image_label_original.pack(padx=3, pady=3)
+
+        self.image_label_edited = tk.Label(
+            self.image_frame_edited, text="Image_Label_Edited", bg="lightgrey")
+        self.image_label_edited.pack(padx=3, pady=3)
+
+        self.file_menu_button = tk.Button(
+            self.menu_frame, text="File Menu", bg="lightgrey")
+        self.file_menu_button.pack(side="left")
+
+        self.image_status_label = tk.Label(
+            self.status_bar_frame, text="Image Status", anchor=tk.W, bg="lightgrey")
+        self.image_status_label.pack(side=tk.LEFT, fill=tk.X)
 
     # Display the image
     def display_image(self, image):
         print(f"ImageView.display_image():Displaying image: {image}")
-        self.image_label.configure(image=image)
-        self.image_label.image = image  # keep a reference so the image doesn't disappear!
+        self.image_label_original.configure(image=image)
+        # keep a reference so the image doesn't disappear!
+        self.image_label_original.image = image
 
     # Open a file dialog to select an image file
     def open_image_file(self, start_path="/") -> str:
