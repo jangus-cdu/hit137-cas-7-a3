@@ -17,37 +17,43 @@ class ImageController:
 
     def bind_events(self):
         # Bind UI events to controller methods
-        self.view.set_img_path_button.config(command=self.set_img_path)
-        self.view.load_img_button.config(command=self.load_image)
-        self.view.open_image_file_button.config(command=self.load_image)
+        self.view.open_image_button.config(command=self.load_image)
+        self.view.save_image_button.config(command=self.save_image)
+        self.view.crop_image_button.config(command=self.crop_image)
+        # self.view.apply_filter_button.config(command=self.apply_filter)
+        # self.view.resize_image_button.config(command=self.resize_image)
+        self.view.rotate_image_button.config(command=self.rotate_image)
 
     def load_image(self):
         # Handle loading image
         image_dir = self.model.get_image_dir()
         image_path = self.view.open_image_file(start_path=image_dir)
         self.model.set_image_path(image_path)
-        # path = self.model.get_image_path()
         self.model.load_image(image_path)
         image = self.model.get_image()
         self.view.display_image(image)
 
     def save_image(self):
         # Handle saving image
+        print("Saving image")
+        pass
+
+    def crop_image(self):
+        # Handle cropping image
+        print("Cropping image")
         pass
 
     def apply_filter(self, filter_type):
         # Handle applying filter
+        print(f"Applying filter: {filter_type}")
         pass
 
     def resize_image(self):
         # Handle resizing image
+        print("Resizing image")
         pass
 
     def rotate_image(self):
         # Handle rotating image
+        print("Rotating image")
         pass
-
-    def set_img_path(self):
-        path = self.view.get_input()
-        self.model.set_image_path(path)
-        self.view.set_display(f"Image path: {self.model.get_image_path()}!")
