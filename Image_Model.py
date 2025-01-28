@@ -10,6 +10,46 @@ from PIL import Image, ImageTk
 
 
 class ImageModel:
+    """
+    A class to represent an image model.
+
+    Attributes
+    ----------
+    image_path : str
+        Path to the image file.
+    image_dir : str
+        Directory of the image file.
+    image : ImageTk.PhotoImage
+        The image object.
+    original_image : ImageTk.PhotoImage
+        The original image object.
+    edited_image : ImageTk.PhotoImage
+        The edited image object.
+
+    Methods
+    -------
+    set_image_path(path):
+        Sets the path to the image file.
+    get_image_path():
+        Gets the path to the image file.
+    get_image_dir():
+        Gets the directory of the image file.
+    load_image(image_path) -> ImageTk.PhotoImage:
+        Loads an image from the given path.
+    get_image():
+        Returns the image object.
+    save_image(path):
+        Saves the edited image to the given path.
+    crop_image(x, y, width, height):
+        Crops the image.
+        Returns the cropped image.
+    apply_filter(filter_type):
+        Applies a filter to the image.
+    resize_image(width, height):
+        Resizes the image.
+    rotate_image(angle):
+        Rotates the image.
+    """
 
     def __init__(self):
         self.image_path = None  # Path to the image file.
@@ -54,13 +94,8 @@ class ImageModel:
         pass
 
     # Crops the image.
-    def crop_image(self, x, y, width, height):
+    def crop_image(self, x, y, width, height) -> ImageTk.PhotoImage:
         # Crop image logic
-        pass
-
-    # Applies a filter to the image.
-    def apply_filter(self, filter_type):
-        # Apply filter logic
         pass
 
     # Resizes the image.

@@ -9,6 +9,27 @@
 
 
 class ImageController:
+    """
+    Controller class for handling image-related operations and interactions between the model and view.
+
+    Attributes:
+        model (ImageModel): The model instance that handles image data and operations.
+        view (ImageView): The view instance that handles the user interface.
+
+    Methods:
+        bind_events():
+            Binds UI events to the corresponding controller methods.
+        load_image():
+            Handles loading an image from the file system and displaying it in the view.
+        save_image():
+            Handles saving the current image to the file system.
+        crop_image():
+            Handles cropping the current image.
+        resize_image():
+            Handles resizing the current image.
+        quit_app():
+            Quits the application.
+    """
 
     def __init__(self, model, view):
         self.model = model  # Instance of ImageModel.
@@ -20,9 +41,7 @@ class ImageController:
         self.view.open_image_button.config(command=self.load_image)
         self.view.save_image_button.config(command=self.save_image)
         self.view.crop_image_button.config(command=self.crop_image)
-        # self.view.apply_filter_button.config(command=self.apply_filter)
-        # self.view.resize_image_button.config(command=self.resize_image)
-        self.view.rotate_image_button.config(command=self.rotate_image)
+        self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):
         # Handle loading image
@@ -43,17 +62,12 @@ class ImageController:
         print("Cropping image")
         pass
 
-    def apply_filter(self, filter_type):
-        # Handle applying filter
-        print(f"Applying filter: {filter_type}")
-        pass
-
     def resize_image(self):
         # Handle resizing image
         print("Resizing image")
         pass
 
-    def rotate_image(self):
-        # Handle rotating image
-        print("Rotating image")
-        pass
+    def quit_app(self):
+        # Quit the application
+        print("Quitting application")
+        self.view.root.destroy()
