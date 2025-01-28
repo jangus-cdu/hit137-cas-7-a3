@@ -144,7 +144,6 @@ class ImageView:
         # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
         # Set frame priorities for resizing
         self.root.grid_rowconfigure(0, weight=1)
-        # self.root.grid_rowconfigure(1, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(4, weight=1)
 
@@ -189,7 +188,7 @@ class ImageView:
         self.image_original_title = tk.Label(
             self.image_frame_original, text="Original Image")
         self.image_canvas_original = tk.Canvas(
-            self.image_frame_original, cursor="cross")
+            self.image_frame_original, cursor="cross", height=0, width=0)
         # self.image_canvas_original.bind("<ButtonPress-1>", self.on_mouse_press)
         # self.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
         # self.image_canvas_original.bind(
@@ -204,24 +203,24 @@ class ImageView:
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
-        self.image_canvas_original.grid(row=1)
+        self.image_canvas_original.grid(row=1, sticky="nsew")
         # self.image_label_original.grid(row=1)
         self.image_edited_title.grid(row=0, sticky="w")
-        self.image_label_edited.grid(row=1)
+        self.image_label_edited.grid(row=1, sticky="nsew")
 
         # Create Bottom Frame Widgets
         self.bottom_label_0 = tk.Label(
             self.bottom_frame, text="Bottom Label 0")
         self.bottom_label_1 = tk.Label(
-            self.bottom_frame, text="Bottom Label 1")  # , padx=10, pady=10)
+            self.bottom_frame, text="Bottom Label 1")
         self.bottom_label_2 = tk.Label(
-            self.bottom_frame, text="Bottom Label 2")  # , padx=10, pady=10)
+            self.bottom_frame, text="Bottom Label 2")
         self.bottom_label_3 = tk.Label(
-            self.bottom_frame, text="Bottom Label 3")  # , padx=10, pady=10)
+            self.bottom_frame, text="Bottom Label 3")
         self.bottom_label_4 = tk.Label(
-            self.bottom_frame, text="Bottom Label 4")  # , padx=10, pady=10)
+            self.bottom_frame, text="Bottom Label 4")
         self.bottom_label_5 = tk.Label(
-            self.bottom_frame, text="Bottom Label 5")  # , padx=10, pady=10)
+            self.bottom_frame, text="Bottom Label 5")
 
         # Layout Bottom Frame Widgets
         self.bottom_label_0.grid(row=0, column=0, columnspan=1, sticky="ew")
@@ -243,15 +242,23 @@ class ImageView:
     # Display the image
     def display_image(self, image):
         print(f"ImageView.display_image():Displaying image: {image}")
-        # self.image_label_original.configure(image=image)
-        # keep a reference so the image doesn't disappear!
-        # self.image_label_original.image = image
+        print(f"image.width(): {image.width()
+                                }, image.height(): {image.height()}")
+        # Resize the window to fit the image
+        self.image_frame_original.config(width=image.width(),
+                                         height=image.height())
+        if image.width() > self.root.winfo_width()/2:
+            self.root.config(width=image.width())
+        if image.height() > self.root.winfo_height():
+            self.root.config(height=image.height())
 
+        # Reset the canvas and display the image
         self.image_canvas_original.delete("all")
-        self.tk_image = image
+        self.image_canvas_original.config(width=image.width(),
+                                          height=image.height())
         self.image_canvas_original.create_image(
-            0, 0, anchor=tk.NW, image=self.tk_image)
-        self.image_canvas_original.image = self.tk_image
+            0, 0, anchor=tk.NW, image=image)
+        # Now update the edited image to display the same image
         self.update_edited_image(image)
 
     # def on_mouse_press(self, event):
@@ -275,21 +282,11 @@ class ImageView:
     def update_edited_image(self, image):
         print(
             f"ImageView.update_edited_image(): Updating edited image: {image}")
+        self.image_frame_edited.config(width=image.width(),
+                                       height=image.height())
         self.image_label_edited.configure(image=image)
         self.image_label_edited.image = image
 
     def update_image(self, image):
         # Update displayed image
         pass
-
-    def show_message(self, message):
-        # Display message to user
-        pass
-
-    # Get user input from the entry widget
-    def get_input(self):
-        return self.entry.get()
-
-    # Set the display text
-    def set_display(self, text):
-        self.display.config(text=text)
