@@ -12,6 +12,79 @@ from PIL import Image, ImageTk
 
 
 class ImageView:
+    """
+    A class to represent the main window for image viewing and editing using Tkinter.
+
+    Attributes
+    ----------
+    root : Tk
+        The main Tkinter window.
+    main_window_width : int
+        Width of the main window.
+    main_window_height : int
+        Height of the main window.
+    menu_frame : Frame
+        Frame for the menu.
+    controls_frame : Frame
+        Frame for control buttons.
+    image_frame_original : Frame
+        Frame for the original image.
+    image_frame_edited : Frame
+        Frame for the edited image.
+    bottom_frame : Frame
+        Bottom frame for displaying various info.
+    open_image_button : Button
+        Button to open a file.
+    save_image_button : Button
+        Button to save the image.
+    crop_image_button : Button
+        Button to crop the image.
+    rotate_image_button : Button
+        Button to rotate the image.
+    quit_button : Button
+        Button to quit the application.
+    image_original_title : Label
+        Label indicating the original image frame.
+    image_original_label : Label
+        Label holding the original image.
+    image_edited_title : Label
+        Label indicating the edited image frame.
+    image_edited_label : Label
+        Label holding the edited image.
+    image_path : str
+        Path to the image file.
+    bottom_label_0 : Label
+        Status bar label 0.
+    bottom_label_1 : Label
+        Status bar label 1.
+    bottom_label_2 : Label
+        Status bar label 2.
+    bottom_label_3 : Label
+        Status bar label 3.
+    bottom_label_4 : Label
+        Status bar label 4.
+    bottom_label_5 : Label
+        Status bar label 5.
+
+    Methods
+    -------
+    create_widgets():
+        Initializes and places widgets in the main window.
+    display_image(image):
+        Displays the given image in the original image frame.
+    open_image_file(start_path="/") -> str:
+        Opens a file dialog to select an image file and returns the file path.
+    update_edited_image(image):
+        Updates the edited image frame with the given image.
+    update_image(image):
+        Updates the displayed image.
+    show_message(message):
+        Displays a message to the user.
+    get_input():
+        Gets user input from the entry widget.
+    set_display(text):
+        Sets the display text.
+    """
 
     def __init__(self, root):
         self.root = root  # The main Tkinter window.
@@ -19,89 +92,132 @@ class ImageView:
         self.main_window_width = 800  # Width of the main window.
         self.main_window_height = 600  # Height of the main window.
         self.menu_frame = None  # Frame for the menu.
+
+        # Main Window Frames
         self.controls_frame = None  # Frame for control buttons.
-        self.status_bar_frame = None  # Frame for the status bar.
         self.image_frame_orignial = None  # Frame for the original image.
         self.image_frame_edited = None  # Frame for the deited image.
+        self.bottom_frame = None  # Bottom Frame for displaying various info.
 
         # Buttons
-        self.file_menu_button = None  # Button to open the file menu.
         self.open_image_button = None  # Button to open a file.
+        self.save_image_button = None  # Button to save the image.
         self.crop_image_button = None  # Button to crop the image.
         self.rotate_image_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
 
         # Labels
-        self.image_label_original = None  # Original image.
-        self.image_label_edited = None  # Edited image.
+        self.image_original_title = None  # Indicates Original Image Frame
+        self.image_original_label = None  # Holds Original image.
+        self.image_edited_title = None  # Indicates Edited Image Frame
+        self.image_edited_label = None  # Holds Edited image.
         self.image_path = None  # Path to the image file.
-        self.image_status_label = None  # Label to display the image status.
+        # Status bar labels
+        self.bottom_label_0 = None
+        self.bottom_label_1 = None
+        self.bottom_label_2 = None
+        self.bottom_label_3 = None
+        self.bottom_label_4 = None
+        self.bottom_label_5 = None
+
+        # Call create widgets method
         self.create_widgets()
 
     # Initialize and place widgets
     def create_widgets(self):
-        # Main window
+        # Setup the Main window
         self.root.config(width=self.main_window_width,
                          height=self.main_window_height, bg="skyblue")
 
-        # Create frames
-        self.menu_frame = tk.Frame(self.root, bg="lightgrey")
-        self.menu_frame.pack(side="top", padx=5, pady=5, fill="x")
+        self.root.minsize(self.main_window_width/2,
+                          self.main_window_height/2)  # Minimum window size
+        # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
+        # self.root.attributes('-topmost', 10) # Place window on top of all others
+        # tkinter columconfigure and rowconfigure
+        # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
+        # Set frame priorities for resizing
+        self.root.grid_rowconfigure(0, weight=1)
+        # self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(4, weight=1)
 
-        self.controls_frame = tk.Frame(self.root, bg="lightgrey")
-        self.controls_frame.pack(side="left")
-
+        # Create main frames - using grid layout for frame and widget placement
+        self.controls_frame = tk.Frame(
+            self.root, width=200, height=400, bg="orange")
         self.image_frame_original = tk.Frame(
-            self.root, width=200, height=200, bg="lightpink")
-        self.image_frame_original.pack(padx=5, pady=5, side="left")
-
+            self.root, width=400, height=400, bg="cyan")
         self.image_frame_edited = tk.Frame(
-            self.root, width=200, height=200, bg="lightseagreen")
-        self.image_frame_edited.pack(side="right", padx=5, pady=5)
+            self.root, width=400, height=400, bg="blue")
+        self.bottom_frame = tk.Frame(
+            self.root, width=800, height=10, bg="green")
 
-        self.status_bar_frame = tk.Frame(
-            self.root, bd=1, relief=tk.SUNKEN, bg="lightgoldenrod1")
-        self.status_bar_frame.pack(side="bottom", padx=5, pady=5, fill="x")
+        # Layout main Frames
+        self.controls_frame.grid(row=0, column=0, columnspan=1, sticky="nsew")
+        self.image_frame_original.grid(
+            row=0, column=1, columnspan=3,  sticky="nsew")
+        self.image_frame_edited.grid(
+            row=0, column=4,  columnspan=3, sticky="nsew")
+        self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
 
         # Create buttons
         self.open_image_button = tk.Button(
             self.controls_frame, text="Open Image")
-        self.open_image_button.pack()
-
         self.save_image_button = tk.Button(
             self.controls_frame, text="Save Image")
-        self.save_image_button.pack()
-
         self.crop_image_button = tk.Button(
             self.controls_frame, text="Crop Image")
-        self.crop_image_button.pack()
-
         self.rotate_image_button = tk.Button(
             self.controls_frame, text="Rotate Image")
-        self.rotate_image_button.pack()
-
         self.quit_button = tk.Button(
-            self.controls_frame, text="QUIT", fg="red", command=self.root.destroy)
-        self.quit_button.pack()
+            self.controls_frame, text="QUIT", fg="red")
 
-        # Create a label to display the image once loaded and supplied by the Model
+        # Layout Control Frame Widgets
+        self.open_image_button.grid(row=0)
+        self.save_image_button.grid(row=1)
+        self.crop_image_button.grid(row=2)
+        self.rotate_image_button.grid(row=3)
+        self.quit_button.grid(row=4)
+
+        # Create Image Frame Widgets
+        self.image_original_title = tk.Label(
+            self.image_frame_original, text="Original Image")
         self.image_label_original = tk.Label(
-            self.image_frame_original, text="Image_Label_Original", bg="lightgrey")
-        self.image_label_original.pack(padx=3, pady=3)
-
+            self.image_frame_original, text="Image_Label_Original")
+        self.image_edited_title = tk.Label(
+            self.image_frame_edited, text="Edited Image")
         self.image_label_edited = tk.Label(
-            self.image_frame_edited, text="Image_Label_Edited", bg="lightgrey")
-        self.image_label_edited.pack(padx=3, pady=3)
+            self.image_frame_edited, text="Image_Label_Edited")
 
-        self.file_menu_button = tk.Button(
-            self.menu_frame, text="File Menu", bg="lightgrey")
-        self.file_menu_button.pack(side="left")
+        # Layout Image Frame Widgets
+        self.image_original_title.grid(row=0, sticky="w")
+        self.image_label_original.grid(row=1)
+        self.image_edited_title.grid(row=0, sticky="w")
+        self.image_label_edited.grid(row=1)
 
-        self.image_status_label = tk.Label(
-            self.status_bar_frame, text="Image Status", anchor=tk.W, bg="lightgrey")
-        self.image_status_label.pack(side=tk.LEFT, fill=tk.X)
+        # Create Bottom Frame Widgets
+        self.bottom_label_0 = tk.Label(
+            self.bottom_frame, text="Bottom Label 0")
+        self.bottom_label_1 = tk.Label(
+            self.bottom_frame, text="Bottom Label 1")  # , padx=10, pady=10)
+        self.bottom_label_2 = tk.Label(
+            self.bottom_frame, text="Bottom Label 2")  # , padx=10, pady=10)
+        self.bottom_label_3 = tk.Label(
+            self.bottom_frame, text="Bottom Label 3")  # , padx=10, pady=10)
+        self.bottom_label_4 = tk.Label(
+            self.bottom_frame, text="Bottom Label 4")  # , padx=10, pady=10)
+        self.bottom_label_5 = tk.Label(
+            self.bottom_frame, text="Bottom Label 5")  # , padx=10, pady=10)
+
+        # Layout Bottom Frame Widgets
+        self.bottom_label_0.grid(row=0, column=0, columnspan=1, sticky="ew")
+        self.bottom_label_1.grid(row=0, column=1, columnspan=1, sticky="ew")
+        self.bottom_label_2.grid(row=0, column=2, columnspan=1, sticky="ew")
+        self.bottom_label_3.grid(row=1, column=0, columnspan=1, sticky="ew")
+        self.bottom_label_4.grid(row=1, column=1, columnspan=1, sticky="ew")
+        self.bottom_label_5.grid(row=1, column=2, columnspan=1, sticky="ew")
 
     # Display the image
+
     def display_image(self, image):
         print(f"ImageView.display_image():Displaying image: {image}")
         self.image_label_original.configure(image=image)
@@ -116,6 +232,20 @@ class ImageView:
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
         print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
+
+    # Display the image
+    def display_image(self, image):
+        print(f"ImageView.display_image():Displaying image: {image}")
+        self.image_label_original.configure(image=image)
+        # keep a reference so the image doesn't disappear!
+        self.image_label_original.image = image
+        self.update_edited_image(image)
+
+    def update_edited_image(self, image):
+        print(
+            f"ImageView.update_edited_image(): Updating edited image: {image}")
+        self.image_label_edited.configure(image=image)
+        self.image_label_edited.image = image
 
     def update_image(self, image):
         # Update displayed image
