@@ -25,5 +25,5 @@ if __name__ == '__main__':
     model = Image_Model.ImageModel()
     view = Image_View.ImageView(root)
     controller = Image_Controller.ImageController(model, view)
-    root.title("MVC Example - Image Viewer")
+    root.title("HIT137 - Image Editor")
     root.mainloop()

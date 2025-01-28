@@ -91,13 +91,18 @@ class ImageView:
         self.root.title("Main Window - ImageView")
         self.main_window_width = 800  # Width of the main window.
         self.main_window_height = 600  # Height of the main window.
-        self.menu_frame = None  # Frame for the menu.
 
         # Main Window Frames
         self.controls_frame = None  # Frame for control buttons.
-        self.image_frame_orignial = None  # Frame for the original image.
+        self.image_frame_orignal = None  # Frame for the original image.
         self.image_frame_edited = None  # Frame for the deited image.
         self.bottom_frame = None  # Bottom Frame for displaying various info.
+
+        # Image Edit Canvas
+        self.image_canvas_original = None  # Canvas for editing the image.
+        self.start_x = None
+        self.start_y = None
+        self.rect = None
 
         # Buttons
         self.open_image_button = None  # Button to open a file.
@@ -106,9 +111,11 @@ class ImageView:
         self.rotate_image_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
 
-        # Labels
+        # Image View Labels
         self.image_original_title = None  # Indicates Original Image Frame
         self.image_original_label = None  # Holds Original image.
+
+        # Image Edit Labels
         self.image_edited_title = None  # Indicates Edited Image Frame
         self.image_edited_label = None  # Holds Edited image.
         self.image_path = None  # Path to the image file.
@@ -181,8 +188,15 @@ class ImageView:
         # Create Image Frame Widgets
         self.image_original_title = tk.Label(
             self.image_frame_original, text="Original Image")
-        self.image_label_original = tk.Label(
-            self.image_frame_original, text="Image_Label_Original")
+        self.image_canvas_original = tk.Canvas(
+            self.image_frame_original, cursor="cross")
+        # self.image_canvas_original.bind("<ButtonPress-1>", self.on_mouse_press)
+        # self.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
+        # self.image_canvas_original.bind(
+        #     "<ButtonRelease-1>", self.on_mouse_release)
+        # self.image_label_original = tk.Label(
+        # self.image_frame_original, text="Image_Label_Original")
+
         self.image_edited_title = tk.Label(
             self.image_frame_edited, text="Edited Image")
         self.image_label_edited = tk.Label(
@@ -190,7 +204,8 @@ class ImageView:
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
-        self.image_label_original.grid(row=1)
+        self.image_canvas_original.grid(row=1)
+        # self.image_label_original.grid(row=1)
         self.image_edited_title.grid(row=0, sticky="w")
         self.image_label_edited.grid(row=1)
 
@@ -216,14 +231,6 @@ class ImageView:
         self.bottom_label_4.grid(row=1, column=1, columnspan=1, sticky="ew")
         self.bottom_label_5.grid(row=1, column=2, columnspan=1, sticky="ew")
 
-    # Display the image
-
-    def display_image(self, image):
-        print(f"ImageView.display_image():Displaying image: {image}")
-        self.image_label_original.configure(image=image)
-        # keep a reference so the image doesn't disappear!
-        self.image_label_original.image = image
-
     # Open a file dialog to select an image file
     def open_image_file(self, start_path="/") -> str:
         print("ImageView.open_image_file(): Opening file dialog...")
@@ -236,10 +243,34 @@ class ImageView:
     # Display the image
     def display_image(self, image):
         print(f"ImageView.display_image():Displaying image: {image}")
-        self.image_label_original.configure(image=image)
+        # self.image_label_original.configure(image=image)
         # keep a reference so the image doesn't disappear!
-        self.image_label_original.image = image
+        # self.image_label_original.image = image
+
+        self.image_canvas_original.delete("all")
+        self.tk_image = image
+        self.image_canvas_original.create_image(
+            0, 0, anchor=tk.NW, image=self.tk_image)
+        self.image_canvas_original.image = self.tk_image
         self.update_edited_image(image)
+
+    # def on_mouse_press(self, event):
+    #     self.start_x = event.x
+    #     self.start_y = event.y
+    #     if self.rect:
+    #         self.image_canvas_original.delete(self.rect)
+    #     self.rect = self.image_canvas_original.create_rectangle(
+    #         self.start_x, self.start_y, self.start_x, self.start_y, outline="red")
+
+    # def on_mouse_drag(self, event):
+    #     if self.rect:
+    #         self.image_canvas_original.coords(
+    #             self.rect, self.start_x, self.start_y, event.x, event.y)
+
+    # def on_mouse_release(self, event):
+    #     if self.rect:
+    #         self.ImageController.handle_crop(
+    #             self.start_x, self.start_y, event.x, event.y)
 
     def update_edited_image(self, image):
         print(
