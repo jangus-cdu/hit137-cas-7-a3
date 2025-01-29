@@ -100,8 +100,10 @@ class ImageView:
 
         # Image Edit Canvas
         self.image_canvas_original = None  # Canvas for editing the image.
-        self.start_x = None
-        self.start_y = None
+        self.start_x = None  # Start x coordinate on mouse click
+        self.start_y = None  # Start y coordinate on mouse click
+        self.end_x = None  # End x coordinate on mouse release
+        self.end_y = None  # End y coordinate on mouse release
         self.rect = None
 
         # Buttons
@@ -119,6 +121,7 @@ class ImageView:
         self.image_edited_title = None  # Indicates Edited Image Frame
         self.image_edited_label = None  # Holds Edited image.
         self.image_path = None  # Path to the image file.
+
         # Status bar labels
         self.bottom_label_0 = None
         self.bottom_label_1 = None
@@ -129,6 +132,9 @@ class ImageView:
 
         # Call create widgets method
         self.create_widgets()
+
+        # Bind UI mouse events to methods
+        self.bind_mouse_events()
 
     # Initialize and place widgets
     def create_widgets(self):
@@ -188,7 +194,7 @@ class ImageView:
         self.image_original_title = tk.Label(
             self.image_frame_original, text="Original Image")
         self.image_canvas_original = tk.Canvas(
-            self.image_frame_original, cursor="cross", height=0, width=0)
+            self.image_frame_original, bg="white", cursor="cross", height=0, width=0)
         # self.image_canvas_original.bind("<ButtonPress-1>", self.on_mouse_press)
         # self.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
         # self.image_canvas_original.bind(
@@ -231,6 +237,7 @@ class ImageView:
         self.bottom_label_5.grid(row=1, column=2, columnspan=1, sticky="ew")
 
     # Open a file dialog to select an image file
+
     def open_image_file(self, start_path="/") -> str:
         print("ImageView.open_image_file(): Opening file dialog...")
         print(f"ImageView.open_image_file(): Start path: {start_path}")
@@ -261,23 +268,38 @@ class ImageView:
         # Now update the edited image to display the same image
         self.update_edited_image(image)
 
-    # def on_mouse_press(self, event):
-    #     self.start_x = event.x
-    #     self.start_y = event.y
-    #     if self.rect:
-    #         self.image_canvas_original.delete(self.rect)
-    #     self.rect = self.image_canvas_original.create_rectangle(
-    #         self.start_x, self.start_y, self.start_x, self.start_y, outline="red")
+    # Bind some UI mouse events
+    def bind_mouse_events(self):
+        # Canvas mouse events
+        self.image_canvas_original.bind("<ButtonPress-1>", self.on_mouse_press)
+        self.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
+        self.image_canvas_original.bind(
+            "<ButtonRelease-1>", self.on_mouse_release)
 
-    # def on_mouse_drag(self, event):
-    #     if self.rect:
-    #         self.image_canvas_original.coords(
-    #             self.rect, self.start_x, self.start_y, event.x, event.y)
+    # Handle mouse click event
+    def on_mouse_press(self, event):
+        print(f"ImageView.on_mouse_press(): Mouse clicked at: {
+              event.x}, {event.y}")
+        self.start_x = event.x
+        self.start_y = event.y
+        if self.rect:
+            self.image_canvas_original.delete(self.rect)
+        self.rect = self.image_canvas_original.create_rectangle(
+            self.start_x, self.start_y, self.start_x, self.start_y, outline="red")
 
-    # def on_mouse_release(self, event):
-    #     if self.rect:
-    #         self.ImageController.handle_crop(
-    #             self.start_x, self.start_y, event.x, event.y)
+    # Handle mouse drag event
+    def on_mouse_drag(self, event):
+        # print(f"ImageView.on_mouse_drag(): Mouse dragged to: {
+        #   event.x}, {event.y}")
+        if self.rect:
+            self.image_canvas_original.coords(
+                self.rect, self.start_x, self.start_y, event.x, event.y)
+
+    def on_mouse_release(self, event):
+        print(f"ImageView.on_mouse_release(): Mouse released at: {
+              event.x}, {event.y}")
+        self.end_x = event.x
+        self.end_y = event.y
 
     def update_edited_image(self, image):
         print(

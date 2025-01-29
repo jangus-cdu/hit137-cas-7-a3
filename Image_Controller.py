@@ -43,11 +43,11 @@ class ImageController:
         self.view.crop_image_button.config(command=self.crop_image)
         self.view.quit_button.config(command=self.quit_app)
 
-        self.view.image_canvas_original.bind(
-            "<ButtonPress-1>", self.on_mouse_press)
-        self.view.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
-        self.view.image_canvas_original.bind(
-            "<ButtonRelease-1>", self.on_mouse_release)
+        # self.view.image_canvas_original.bind(
+        #     "<ButtonPress-1>", self.on_mouse_press)
+        # self.view.image_canvas_original.bind("<B1-Motion>", self.on_mouse_drag)
+        # self.view.image_canvas_original.bind(
+        #     "<ButtonRelease-1>", self.on_mouse_release)
 
     def load_image(self):
         # Handle loading image
@@ -68,29 +68,31 @@ class ImageController:
         print("Quitting application")
         self.view.root.destroy()
 
-    def on_mouse_press(self, event):
-        self.view.start_x = event.x
-        self.view.start_y = event.y
-        if self.view.rect:
-            self.view.image_canvas_original.delete(self.view.rect)
-        self.view.rect = self.view.image_canvas_original.create_rectangle(
-            self.view.start_x, self.view.start_y, self.view.start_x, self.view.start_y, outline="red")
+    # def on_mouse_press(self, event):
+    #     self.view.start_x = event.x
+    #     self.view.start_y = event.y
+    #     if self.view.rect:
+    #         self.view.image_canvas_original.delete(self.view.rect)
+    #     self.view.rect = self.view.image_canvas_original.create_rectangle(
+    #         self.view.start_x, self.view.start_y, self.view.start_x, self.view.start_y, outline="red")
 
-    def on_mouse_drag(self, event):
-        if self.view.rect:
-            self.view.image_canvas_original.coords(
-                self.view.rect, self.view.start_x, self.view.start_y, event.x, event.y)
+    # def on_mouse_drag(self, event):
+    #     if self.view.rect:
+    #         self.view.image_canvas_original.coords(
+    #             self.view.rect, self.view.start_x, self.view.start_y, event.x, event.y)
 
-    def on_mouse_release(self, event):
-        if self.view.rect:
-            self.handle_crop(
-                self.view.start_x, self.view.start_y, event.x, event.y)
+    # def on_mouse_release(self, event):
+    #     if self.view.rect:
+    #         self.handle_crop(
+    #             self.view.start_x, self.view.start_y, event.x, event.y)
 
-    def handle_crop(self, start_x, start_y, end_x, end_y):
-        self.model.set_crop_coords(start_x, start_y, end_x, end_y)
+    # def handle_crop(self, start_x, start_y, end_x, end_y):
+        # self.model.set_crop_coords(start_x, start_y, end_x, end_y)
 
     def crop_image(self):
         # Handle cropping image
+        self.model.set_crop_coords(
+            self.view.start_x, self.view.start_y, self.view.end_x, self.view.end_y)
         cropped_image = self.model.get_cropped_image()
         if cropped_image:
             self.view.update_edited_image(cropped_image)
