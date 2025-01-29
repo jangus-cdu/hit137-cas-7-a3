@@ -14,20 +14,18 @@ class ImageModel:
     A class to represent an image model.
 
     Attributes
-    ----------
-    image_path : str
+    image_path (str): 
         Path to the image file.
-    image_dir : str
+    image_dir (str): 
         Directory of the image file.
-    image : ImageTk.PhotoImage
+    image (ImageTk.PhotoImage): 
         The image object.
-    original_image : ImageTk.PhotoImage
+    original_image (ImageTk.PhotoImage):
         The original image object.
-    edited_image : ImageTk.PhotoImage
+    edited_image (ImageTk.PhotoImage):
         The edited image object.
 
     Methods
-    -------
     set_image_path(path):
         Sets the path to the image file.
     get_image_path():
@@ -43,8 +41,6 @@ class ImageModel:
     crop_image(x, y, width, height):
         Crops the image.
         Returns the cropped image.
-    apply_filter(filter_type):
-        Applies a filter to the image.
     resize_image(width, height):
         Resizes the image.
     rotate_image(angle):
@@ -57,41 +53,100 @@ class ImageModel:
         self.image = None  # The image object.
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
+        self.crop_coords = None  # Coordinates for cropping the image.
 
-    # Sets the path to the image file.
     def set_image_path(self, path):
+        """
+        Sets the path to the image file and updates the image directory.
+
+        Parameters
+        path (str): The path to the image file.
+
+        Returns
+        None
+        """
         print(f"ImageModel.set_image_path(): Setting image path to: {path}")
         self.image_path = path
         self.image_dir = os.path.dirname(self.image_path)
 
-    # Gets the path to the image file.
     def get_image_path(self):
+        """
+        Gets the path to the image file.
+
+        Returns
+        str: The path to the image file.
+        """
         print(f"ImageModel.get_image_path(): Returning image path: {
               self.image_path}")
         return self.image_path
 
-    # Gets the directory of the image file.
     def get_image_dir(self):
+        """
+        Gets the directory of the image file.
+
+        Returns
+        str: The directory of the image file.
+        """
         print(f"ImageModel.get_image_dir(): Returning image directory: {
               self.image_dir}")
         return self.image_dir
 
-    # Loads an image from the given path.
-    def load_image(self, image_path) -> ImageTk.PhotoImage:
+    def load_image(self, image_path):
+        """
+        Loads an image from the given path.
+
+        Parameters
+        image_path (str): The path to the image file.
+
+        Returns
+        ImageTk.PhotoImage: The loaded image object.
+        """
         # Load image logic
         print(f"ImageModel.load_image(): Loading image from: {image_path}")
         self.image = ImageTk.PhotoImage(Image.open(self.image_path))
-        return self.image
 
-    # Returns the image object.
     def get_image(self):
-        print(f"ImageModel.get_photo(): Returning photo: {self.image}")
+        """
+        Gets the loaded image object.
+
+        Returns
+        ImageTk.PhotoImage: The loaded image object.
+        """
+        print(f"ImageModel.get_photo(): Returning image: {self.image}")
         return self.image
 
     # Saves the edited image to the given path.
     def save_image(self, path):
         # Save image logic
         pass
+
+    def set_crop_coords(self, start_x, start_y, end_x, end_y):
+        """
+        Sets the coordinates for cropping the image.
+
+        Parameters
+        start_x (int): The starting x-coordinate of the cropping rectangle.
+        start_y (int): The starting y-coordinate of the cropping rectangle.
+        end_x (int): The ending x-coordinate of the cropping rectangle.
+        end_y (int): The ending y-coordinate of the cropping rectangle.
+
+        Returns
+        None
+        """
+        self.crop_coords = (start_x, start_y, end_x, end_y)
+
+    def get_cropped_image(self) -> ImageTk.PhotoImage:
+        """
+        Gets the cropped image object.
+
+        Returns
+        ImageTk.PhotoImage: The cropped image object or None if no image is loaded.
+        """
+        if self.image and self.crop_coords:
+            # Convert to PIL.Image to access crop() method
+            img = ImageTk.getimage(self.image)
+            return ImageTk.PhotoImage(img.crop(self.crop_coords))
+        return None
 
     # Crops the image.
     def crop_image(self, x, y, width, height) -> ImageTk.PhotoImage:
@@ -101,9 +156,4 @@ class ImageModel:
     # Resizes the image.
     def resize_image(self, width, height):
         # Resize image logic
-        pass
-
-    # Rotates the image.
-    def rotate_image(self, angle):
-        # Rotate image logic
         pass

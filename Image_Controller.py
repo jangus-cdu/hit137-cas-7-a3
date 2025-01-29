@@ -37,13 +37,24 @@ class ImageController:
         self.bind_events()
 
     def bind_events(self):
-        # Bind UI events to controller methods
+        """
+        Binds UI events to the corresponding controller methods.
+        """
         self.view.open_image_button.config(command=self.load_image)
         self.view.save_image_button.config(command=self.save_image)
         self.view.crop_image_button.config(command=self.crop_image)
         self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):
+        """
+        Handles loading an image from the file system and displaying it in the view.
+
+        Displays the "Open file" dialog box and loads the selected image from the file system.
+        The image is then displayed in the view.
+
+        Returns:
+            None
+        """
         # Handle loading image
         image_dir = self.model.get_image_dir()
         image_path = self.view.open_image_file(start_path=image_dir)
@@ -57,17 +68,29 @@ class ImageController:
         print("Saving image")
         pass
 
+    def quit_app(self):
+        # Quit the application
+        print("Quitting application")
+        self.view.root.destroy()
+
     def crop_image(self):
-        # Handle cropping image
+        """
+        Handles cropping the current image.
+
+        Sets the crop coordinates in the model and crops the image.
+        The cropped image is then displayed in the view.
+
+        Returns:
+            None
+        """
         print("Cropping image")
-        pass
+        self.model.set_crop_coords(
+            self.view.start_x, self.view.start_y, self.view.end_x, self.view.end_y)
+        cropped_image = self.model.get_cropped_image()
+        if cropped_image:
+            self.view.update_edited_image(cropped_image)
 
     def resize_image(self):
         # Handle resizing image
         print("Resizing image")
         pass
-
-    def quit_app(self):
-        # Quit the application
-        print("Quitting application")
-        self.view.root.destroy()
