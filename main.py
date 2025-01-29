@@ -16,8 +16,8 @@ import Image_Model
 import Image_View
 import Image_Controller
 
-# TODO: Create skeleton for Model View Controller (MVC) functionality
-
+# TODO: Use OpenCV for image processing tasks. (Wed 29 Jan 2025)
+# TODO: Add image resize slider and functionality. (Wed 29 Jan 2025)
 
 if __name__ == '__main__':
     print("HIT137 - Group Assignment 3")
