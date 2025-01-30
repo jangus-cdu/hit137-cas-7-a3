@@ -36,6 +36,11 @@ required functionality.
 
 - [Python Classes](https://docs.python.org/3/tutorial/classes.html)
 
+### TKinter References
+
+- [Modern Tk Best Practices](https://tkdocs.com)
+- [TkDocs tutorial](https://tkdocs.com/tutorial/index.html)
+
 ## Markdown References
 
 ### GitHub Flavored Markdown
