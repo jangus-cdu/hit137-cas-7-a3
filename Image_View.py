@@ -82,8 +82,8 @@ class ImageView:
     def __init__(self, root):
         self.root = root  # The main Tkinter window.
         self.root.title("Main Window - ImageView")
-        # self.main_window_width = 800  # Width of the main window.
-        # self.main_window_height = 600  # Height of the main window.
+        self.main_window_width = 800  # Width of the main window.
+        self.main_window_height = 600  # Height of the main window.
 
         # Main Window Frames
         self.content_frame = None
@@ -133,38 +133,29 @@ class ImageView:
         """
         Initializes and places all the widgets in the main window.
         """
-        # self.root.config(width=self.main_window_width,
-        #  height=self.main_window_height, bg="skyblue")
+        self.root.config(width=self.main_window_width,
+                         height=self.main_window_height, bg="skyblue")
 
-        # self.root.minsize(self.main_window_width/2,
-        #   self.main_window_height/2)  # Minimum window size
+        self.root.minsize(self.main_window_width/2,
+                          self.main_window_height/2)  # Minimum window size
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
-        # self.root.attributes('-topmost', 10) # Place window on top of all others
+        # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
         # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
-        # Set frame priorities for resizing
-        # self.root.grid_rowconfigure(0, weight=1)
-        # self.root.grid_columnconfigure(1, weight=1)
-        # self.root.grid_columnconfigure(4, weight=1)
         self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
             self.content_frame, width=200, height=400, borderwidth=3, relief="ridge")
-        # self.root, width=200, height=400, bg="orange")
         self.image_frame_original = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
-        # self.root, width=400, height=400, bg="cyan")
         self.image_frame_edited = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
-        # self.root, width=400, height=400, bg="blue")
         self.bottom_frame = ttk.Frame(
             self.content_frame, width=1000, height=10, borderwidth=3, relief="ridge")
-        # self.root, width=800, height=10, bg="green")
 
         # Layout main Frames
         self.content_frame.grid(column=0, row=0, columnspan=7, sticky="nsew")
-
         self.controls_frame.grid(row=0, column=0, columnspan=1, sticky="nsew")
         self.image_frame_original.grid(
             row=0, column=1, columnspan=3,  sticky="nsew")
@@ -181,8 +172,10 @@ class ImageView:
             self.controls_frame, text="Crop Image")
         self.rotate_image_button = ttk.Button(
             self.controls_frame, text="Rotate Image")
-        self.quit_button = tk.Button(
-            self.controls_frame, text="QUIT", fg="red")
+        self.quit_style = ttk.Style()
+        self.quit_style.configure('Quit.TButton', foreground='red')
+        self.quit_button = ttk.Button(
+            self.controls_frame, text="QUIT", style='Quit.TButton')
 
         # Layout Control Frame Widgets
         self.open_image_button.grid(row=0)
@@ -240,8 +233,6 @@ class ImageView:
         self.content_frame.rowconfigure(1, weight=0)
         self.content_frame.rowconfigure(2, weight=0)
 
-        # self.bottom_frame.rowconfigure(0, weight=1)
-        # self.bottom_frame.rowconfigure(0, weight=1)
         self.bottom_frame.columnconfigure(0, weight=0)
         self.bottom_frame.columnconfigure(1, weight=1)
         self.bottom_frame.columnconfigure(4, weight=1)
