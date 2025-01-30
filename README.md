@@ -41,6 +41,11 @@ required functionality.
 - [Modern Tk Best Practices](https://tkdocs.com)
 - [TkDocs tutorial](https://tkdocs.com/tutorial/index.html)
 
+### OpenCV References
+
+- [OpenCV modules](https://docs.opencv.org/master/index.html)
+- [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/)
+
 ## Markdown References
 
 ### GitHub Flavored Markdown
