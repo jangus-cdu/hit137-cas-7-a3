@@ -94,3 +94,8 @@ class ImageController:
         # Handle resizing image
         print("Resizing image")
         pass
+
+    def set_window_size(self):
+        # Handle setting window size
+        print("Setting window size")
+        pass

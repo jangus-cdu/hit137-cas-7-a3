@@ -7,6 +7,7 @@
 # changes to the Model and Controller.
 
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
@@ -36,6 +37,8 @@ class ImageView:
         Button to save the image.
     crop_image_button : Button
         Button to crop the image.
+    resize_image_slider : Scale
+        Slider to resize the edited image.
     rotate_image_button : Button
         Button to rotate the image.
     quit_button : Button
@@ -85,6 +88,7 @@ class ImageView:
         self.main_window_height = 600  # Height of the main window.
 
         # Main Window Frames
+        self.content_frame = None
         self.controls_frame = None  # Frame for control buttons.
         self.image_frame_orignal = None  # Frame for the original image.
         self.image_frame_edited = None  # Frame for the deited image.
@@ -104,6 +108,10 @@ class ImageView:
         self.crop_image_button = None  # Button to crop the image.
         self.rotate_image_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
+
+        # Sliders
+        self.resize_image_label = None  # Label for the resize slider.
+        self.resize_image_slider = None  # Slider to resize the edited image.
 
         # Image View Labels
         self.image_original_title = None  # Indicates Original Image Frame
@@ -137,25 +145,23 @@ class ImageView:
         self.root.minsize(self.main_window_width/2,
                           self.main_window_height/2)  # Minimum window size
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
-        # self.root.attributes('-topmost', 10) # Place window on top of all others
+        # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
         # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
-        # Set frame priorities for resizing
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_columnconfigure(1, weight=1)
-        self.root.grid_columnconfigure(4, weight=1)
+        self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
-        self.controls_frame = tk.Frame(
-            self.root, width=200, height=400, bg="orange")
-        self.image_frame_original = tk.Frame(
-            self.root, width=400, height=400, bg="cyan")
-        self.image_frame_edited = tk.Frame(
-            self.root, width=400, height=400, bg="blue")
-        self.bottom_frame = tk.Frame(
-            self.root, width=800, height=10, bg="green")
+        self.controls_frame = ttk.Frame(
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge")
+        self.image_frame_original = ttk.Frame(
+            self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
+        self.image_frame_edited = ttk.Frame(
+            self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
+        self.bottom_frame = ttk.Frame(
+            self.content_frame, width=1000, height=10, borderwidth=3, relief="ridge")
 
         # Layout main Frames
+        self.content_frame.grid(column=0, row=0, columnspan=7, sticky="nsew")
         self.controls_frame.grid(row=0, column=0, columnspan=1, sticky="nsew")
         self.image_frame_original.grid(
             row=0, column=1, columnspan=3,  sticky="nsew")
@@ -164,48 +170,57 @@ class ImageView:
         self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
 
         # Create buttons
-        self.open_image_button = tk.Button(
+        self.open_image_button = ttk.Button(
             self.controls_frame, text="Open Image")
-        self.save_image_button = tk.Button(
+        self.save_image_button = ttk.Button(
             self.controls_frame, text="Save Image")
-        self.crop_image_button = tk.Button(
+        self.crop_image_button = ttk.Button(
             self.controls_frame, text="Crop Image")
-        self.rotate_image_button = tk.Button(
+        self.rotate_image_button = ttk.Button(
             self.controls_frame, text="Rotate Image")
-        self.quit_button = tk.Button(
-            self.controls_frame, text="QUIT", fg="red")
+        self.quit_style = ttk.Style()
+        self.quit_style.configure('Quit.TButton', foreground='red')
+        self.quit_button = ttk.Button(
+            self.controls_frame, text="QUIT", style='Quit.TButton')
+
+        # Create Sliders
+        self.resize_image_label = ttk.Label(
+            self.controls_frame, text="Resize Image")
+        self.resize_image_slider = ttk.Scale(
+            self.controls_frame, from_=0, to=100, orient="horizontal")
 
         # Layout Control Frame Widgets
         self.open_image_button.grid(row=0)
         self.save_image_button.grid(row=1)
         self.crop_image_button.grid(row=2)
-        self.rotate_image_button.grid(row=3)
-        self.quit_button.grid(row=4)
+        self.resize_image_label.grid(row=3)
+        self.resize_image_slider.grid(row=4)
+        self.rotate_image_button.grid(row=5)
+        self.quit_button.grid(row=6)
 
         # Create Image Frame Widgets
-        self.image_original_title = tk.Label(
+        self.image_original_title = ttk.Label(
             self.image_frame_original, text="Original Image")
         self.image_canvas_original = tk.Canvas(
             self.image_frame_original, bg="white", cursor="cross", height=0, width=0)
 
-        self.image_edited_title = tk.Label(
+        self.image_edited_title = ttk.Label(
             self.image_frame_edited, text="Edited Image")
-        self.image_label_edited = tk.Label(
+        self.image_label_edited = ttk.Label(
             self.image_frame_edited, text="Image_Label_Edited")
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
-        # self.image_label_original.grid(row=1)
         self.image_edited_title.grid(row=0, sticky="w")
         self.image_label_edited.grid(row=1, sticky="nsew")
 
         # Create Bottom Frame Widgets
-        self.bottom_label_0 = tk.Label(
+        self.bottom_label_0 = ttk.Label(
             self.bottom_frame, text="Bottom Label 0")
-        self.bottom_label_1 = tk.Label(
+        self.bottom_label_1 = ttk.Label(
             self.bottom_frame, text="Bottom Label 1")
-        self.bottom_label_2 = tk.Label(
+        self.bottom_label_2 = ttk.Label(
             self.bottom_frame, text="Bottom Label 2")
         self.bottom_label_3 = tk.Label(
             self.bottom_frame, text="Bottom Label 3")
@@ -215,12 +230,26 @@ class ImageView:
             self.bottom_frame, text="Bottom Label 5")
 
         # Layout Bottom Frame Widgets
-        self.bottom_label_0.grid(row=0, column=0, columnspan=1, sticky="ew")
-        self.bottom_label_1.grid(row=0, column=1, columnspan=1, sticky="ew")
-        self.bottom_label_2.grid(row=0, column=2, columnspan=1, sticky="ew")
-        self.bottom_label_3.grid(row=1, column=0, columnspan=1, sticky="ew")
-        self.bottom_label_4.grid(row=1, column=1, columnspan=1, sticky="ew")
-        self.bottom_label_5.grid(row=1, column=2, columnspan=1, sticky="ew")
+        self.bottom_label_0.grid(row=0, column=0, sticky="w")
+        self.bottom_label_1.grid(row=0, column=1)
+        self.bottom_label_2.grid(row=0, column=4)
+        self.bottom_label_3.grid(row=1, column=0, sticky="w")
+        self.bottom_label_4.grid(row=1, column=1)
+        self.bottom_label_5.grid(row=1, column=4)
+
+        # Set resizing priorities
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        self.content_frame.columnconfigure(0, weight=0)
+        self.content_frame.columnconfigure(1, weight=1)
+        self.content_frame.columnconfigure(4, weight=1)
+        self.content_frame.rowconfigure(0, weight=1)
+        self.content_frame.rowconfigure(1, weight=0)
+        self.content_frame.rowconfigure(2, weight=0)
+
+        self.bottom_frame.columnconfigure(0, weight=0)
+        self.bottom_frame.columnconfigure(1, weight=1)
+        self.bottom_frame.columnconfigure(4, weight=1)
 
     # Open a file dialog to select an image file
 
@@ -263,12 +292,16 @@ class ImageView:
         print(f"image.width(): {image.width()
                                 }, image.height(): {image.height()}")
         # Resize the window to fit the image
+        # self.root.config(width=self.main_window_width,
+        #  height=self.main_window_height)
+        self.content_frame.config(width=self.main_window_width,
+                                  height=self.main_window_height)
         self.image_frame_original.config(width=image.width(),
                                          height=image.height())
-        if image.width() > self.root.winfo_width()/2:
-            self.root.config(width=image.width())
-        if image.height() > self.root.winfo_height():
-            self.root.config(height=image.height())
+        # if image.width() > self.root.winfo_width()/2:
+        # self.root.config(width=image.width())
+        # if image.height() > self.root.winfo_height():
+        # self.root.config(height=image.height())
 
         # Reset the canvas and display the image
         self.image_canvas_original.delete("all")
