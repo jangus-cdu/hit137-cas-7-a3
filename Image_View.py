@@ -37,6 +37,8 @@ class ImageView:
         Button to save the image.
     crop_image_button : Button
         Button to crop the image.
+    resize_image_slider : Scale
+        Slider to resize the edited image.
     rotate_image_button : Button
         Button to rotate the image.
     quit_button : Button
@@ -106,6 +108,10 @@ class ImageView:
         self.crop_image_button = None  # Button to crop the image.
         self.rotate_image_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
+
+        # Sliders
+        self.resize_image_label = None  # Label for the resize slider.
+        self.resize_image_slider = None  # Slider to resize the edited image.
 
         # Image View Labels
         self.image_original_title = None  # Indicates Original Image Frame
@@ -177,12 +183,20 @@ class ImageView:
         self.quit_button = ttk.Button(
             self.controls_frame, text="QUIT", style='Quit.TButton')
 
+        # Create Sliders
+        self.resize_image_label = ttk.Label(
+            self.controls_frame, text="Resize Image")
+        self.resize_image_slider = ttk.Scale(
+            self.controls_frame, from_=0, to=100, orient="horizontal")
+
         # Layout Control Frame Widgets
         self.open_image_button.grid(row=0)
         self.save_image_button.grid(row=1)
         self.crop_image_button.grid(row=2)
-        self.rotate_image_button.grid(row=3)
-        self.quit_button.grid(row=4)
+        self.resize_image_label.grid(row=3)
+        self.resize_image_slider.grid(row=4)
+        self.rotate_image_button.grid(row=5)
+        self.quit_button.grid(row=6)
 
         # Create Image Frame Widgets
         self.image_original_title = ttk.Label(
