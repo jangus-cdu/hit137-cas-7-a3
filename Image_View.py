@@ -150,20 +150,20 @@ class ImageView:
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
-            self.content_frame, width=200, height=400, borderwidth=5, relief="ridge")
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge")
         # self.root, width=200, height=400, bg="orange")
         self.image_frame_original = ttk.Frame(
-            self.content_frame, width=400, height=400, borderwidth=5, relief="ridge")
+            self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         # self.root, width=400, height=400, bg="cyan")
         self.image_frame_edited = ttk.Frame(
-            self.content_frame, width=400, height=400, borderwidth=5, relief="ridge")
+            self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         # self.root, width=400, height=400, bg="blue")
         self.bottom_frame = ttk.Frame(
-            self.content_frame, width=800, height=10, borderwidth=5, relief="ridge")
+            self.content_frame, width=1000, height=10, borderwidth=3, relief="ridge")
         # self.root, width=800, height=10, bg="green")
 
         # Layout main Frames
-        self.content_frame.grid(column=0, row=0, sticky="nsew")
+        self.content_frame.grid(column=0, row=0, columnspan=7, sticky="nsew")
 
         self.controls_frame.grid(row=0, column=0, columnspan=1, sticky="nsew")
         self.image_frame_original.grid(
@@ -205,7 +205,6 @@ class ImageView:
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
-        # self.image_label_original.grid(row=1)
         self.image_edited_title.grid(row=0, sticky="w")
         self.image_label_edited.grid(row=1, sticky="nsew")
 
@@ -224,12 +223,12 @@ class ImageView:
             self.bottom_frame, text="Bottom Label 5")
 
         # Layout Bottom Frame Widgets
-        self.bottom_label_0.grid(row=0, column=0, columnspan=1, sticky="ew")
-        self.bottom_label_1.grid(row=0, column=1, columnspan=1, sticky="ew")
-        self.bottom_label_2.grid(row=0, column=2, columnspan=1, sticky="ew")
-        self.bottom_label_3.grid(row=1, column=0, columnspan=1, sticky="ew")
-        self.bottom_label_4.grid(row=1, column=1, columnspan=1, sticky="ew")
-        self.bottom_label_5.grid(row=1, column=2, columnspan=1, sticky="ew")
+        self.bottom_label_0.grid(row=0, column=0, sticky="w")
+        self.bottom_label_1.grid(row=0, column=1)
+        self.bottom_label_2.grid(row=0, column=4)
+        self.bottom_label_3.grid(row=1, column=0, sticky="w")
+        self.bottom_label_4.grid(row=1, column=1)
+        self.bottom_label_5.grid(row=1, column=4)
 
         # Set resizing priorities
         self.root.columnconfigure(0, weight=1)
@@ -239,6 +238,13 @@ class ImageView:
         self.content_frame.columnconfigure(4, weight=1)
         self.content_frame.rowconfigure(0, weight=1)
         self.content_frame.rowconfigure(1, weight=0)
+        self.content_frame.rowconfigure(2, weight=0)
+
+        # self.bottom_frame.rowconfigure(0, weight=1)
+        # self.bottom_frame.rowconfigure(0, weight=1)
+        self.bottom_frame.columnconfigure(0, weight=0)
+        self.bottom_frame.columnconfigure(1, weight=1)
+        self.bottom_frame.columnconfigure(4, weight=1)
 
     # Open a file dialog to select an image file
 
