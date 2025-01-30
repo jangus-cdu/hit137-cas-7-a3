@@ -292,12 +292,16 @@ class ImageView:
         print(f"image.width(): {image.width()
                                 }, image.height(): {image.height()}")
         # Resize the window to fit the image
+        # self.root.config(width=self.main_window_width,
+        #  height=self.main_window_height)
+        self.content_frame.config(width=self.main_window_width,
+                                  height=self.main_window_height)
         self.image_frame_original.config(width=image.width(),
                                          height=image.height())
         # if image.width() > self.root.winfo_width()/2:
-        self.root.config(width=image.width())
+        # self.root.config(width=image.width())
         # if image.height() > self.root.winfo_height():
-        self.root.config(height=image.height())
+        # self.root.config(height=image.height())
 
         # Reset the canvas and display the image
         self.image_canvas_original.delete("all")
