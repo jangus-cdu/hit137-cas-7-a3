@@ -142,8 +142,8 @@ class ImageView:
         self.root.config(width=self.main_window_width,
                          height=self.main_window_height, bg="skyblue")
 
-        self.root.minsize(self.main_window_width/2,
-                          self.main_window_height/2)  # Minimum window size
+        self.root.minsize(int(self.main_window_width/2),
+                          int(self.main_window_height/2))  # Minimum window size
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
         # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
