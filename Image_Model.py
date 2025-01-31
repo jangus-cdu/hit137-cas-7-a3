@@ -6,6 +6,7 @@
 # can update itself accordingly.
 
 import os
+import cv2  # OpenCV library
 from PIL import Image, ImageTk
 
 
@@ -103,7 +104,9 @@ class ImageModel:
         """
         # Load image logic
         print(f"ImageModel.load_image(): Loading image from: {image_path}")
-        self.image = ImageTk.PhotoImage(Image.open(self.image_path))
+        # self.image = ImageTk.PhotoImage(Image.open(self.image_path))
+        self.image = cv2.imread(image_path)
+        # print(f"ImageModel.load_image(): Loaded image: {self.image}")
 
     def get_image(self):
         """
@@ -112,8 +115,29 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The loaded image object.
         """
-        print(f"ImageModel.get_photo(): Returning image: {self.image}")
+        print(f"ImageModel.get_image(): Returning image: {self.image}")
         return self.image
+
+    def get_tk_photoimage(self):
+        """
+        Gets the loaded image converted to a tkinter photoimage object.
+
+        This method converts the loaded image object to a tkinter photoimage
+        object, which is an image format used by tkinter for displaying
+        images.
+
+        Returns
+        ImageTk.PhotoImage: The loaded image object.
+        """
+        # OpenCV uses BGR format, PIL uses RGB
+        color_coverted = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        # Convert to PIL Image - from BGR to RGB format
+        pil_image = Image.fromarray(color_coverted)
+        print(f"ImageModel.get_tk_photoimage(): pil_image: {pil_image}")
+        # Convert to Tkinter PhotoImage object
+        tk_image = ImageTk.PhotoImage(image=pil_image)
+        print(f"ImageModel.get_tk_photoimage(): tk_image: {tk_image}")
+        return tk_image
 
     # Saves the edited image to the given path.
     def save_image(self, path):
