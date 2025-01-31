@@ -76,8 +76,8 @@ class ImageModel:
         Returns
         str: The path to the image file.
         """
-        print(f"ImageModel.get_image_path(): Returning image path: {
-              self.image_path}")
+        print(f"ImageModel.get_image_path(): Returning image path: "
+              f"{self.image_path}")
         return self.image_path
 
     def get_image_dir(self):
@@ -87,8 +87,8 @@ class ImageModel:
         Returns
         str: The directory of the image file.
         """
-        print(f"ImageModel.get_image_dir(): Returning image directory: {
-              self.image_dir}")
+        print(f"ImageModel.get_image_dir(): Returning image directory: "
+              f"{self.image_dir}")
         return self.image_dir
 
     def load_image(self, image_path):

@@ -289,8 +289,8 @@ class ImageView:
         None
         """
         print(f"ImageView.display_image():Displaying image: {image}")
-        print(f"image.width(): {image.width()
-                                }, image.height(): {image.height()}")
+        print(f"image.width(): {image.width()}, "
+              f"image.height(): {image.height()}")
         # Resize the window to fit the image
         # self.root.config(width=self.main_window_width,
         #  height=self.main_window_height)
@@ -334,8 +334,8 @@ class ImageView:
         It captures the mouse coordinates and marks the start of the selection area.
         The selection area is shown as a red rectangle on the canvas.
         """
-        print(f"ImageView.on_mouse_press(): Mouse clicked at: {
-              event.x}, {event.y}")
+        print(f"ImageView.on_mouse_press(): Mouse clicked at: "
+              f"{event.x}, {event.y}")
         self.start_x = event.x
         self.start_y = event.y
         if self.rect:
@@ -351,8 +351,6 @@ class ImageView:
         When the user drags the mouse on the original image canvas, this method is called.
         It updates the coordinates of the selection rectangle to show the current drag position.
         """
-        # print(f"ImageView.on_mouse_drag(): Mouse dragged to: {
-        #   event.x}, {event.y}")
         if self.rect:
             self.image_canvas_original.coords(
                 self.rect, self.start_x, self.start_y, event.x, event.y)
@@ -373,8 +371,8 @@ class ImageView:
         None
         """
 
-        print(f"ImageView.on_mouse_release(): Mouse released at: {
-              event.x}, {event.y}")
+        print(f"ImageView.on_mouse_release(): Mouse released at: "
+              f"{event.x}, {event.y}")
         self.end_x = event.x
         self.end_y = event.y
 
