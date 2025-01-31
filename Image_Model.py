@@ -7,6 +7,7 @@
 
 import os
 import cv2  # OpenCV library
+import numpy as np
 from PIL import Image, ImageTk
 
 
@@ -19,11 +20,11 @@ class ImageModel:
         Path to the image file.
     image_dir (str): 
         Directory of the image file.
-    image (ImageTk.PhotoImage): 
-        The image object.
-    original_image (ImageTk.PhotoImage):
+    image (OpenCV image): 
+        The image object loaded from a file.
+    original_image (OpenCV image):
         The original image object.
-    edited_image (ImageTk.PhotoImage):
+    edited_image (OpenCV image):
         The edited image object.
 
     Methods
@@ -33,10 +34,18 @@ class ImageModel:
         Gets the path to the image file.
     get_image_dir():
         Gets the directory of the image file.
-    load_image(image_path) -> ImageTk.PhotoImage:
-        Loads an image from the given path.
+    load_image(image_path):
+        Loads an image from the given path using OpenCV.
     get_image():
         Returns the image object.
+    get_tk_photoimage():
+        Returns the image as a tkinter photoimage object.
+    opencv_to_pil(self, image):
+        Converts an OpenCV image to a PIL image.
+    opencv_to_tk(self, image):
+        Converts an OpenCV image to a tkinter photoimage object.
+    is_opencv_image(self, image):
+        Checks if the given image is an OpenCV image.
     save_image(path):
         Saves the edited image to the given path.
     crop_image(x, y, width, height):
@@ -51,7 +60,7 @@ class ImageModel:
     def __init__(self):
         self.image_path = None  # Path to the image file.
         self.image_dir = "/"  # Directory of the image file - default is root.
-        self.image = None  # The image object.
+        self.image = None  # The image object - an OpenCV image.
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
         self.crop_coords = None  # Coordinates for cropping the image.
@@ -113,7 +122,7 @@ class ImageModel:
         Gets the loaded image object.
 
         Returns
-        ImageTk.PhotoImage: The loaded image object.
+        OpenCV image: The loaded image object.
         """
         print(f"ImageModel.get_image(): Returning image: {self.image}")
         return self.image
@@ -127,17 +136,72 @@ class ImageModel:
         images.
 
         Returns
-        ImageTk.PhotoImage: The loaded image object.
+        ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
+        return self.opencv_to_tk(self.image)
+
+    def opencv_to_pil(self, image):
+        """
+        Converts an OpenCV image to a PIL image.
+
+        Parameters
+        image (ndarray): The OpenCV image to be converted.
+
+        Returns
+        PIL.Image: The converted PIL image.
+        None if the input image is not a valid OpenCV image.
+        """
+        if not self.is_opencv_image(image):
+            print("Input image is not a valid OpenCV image.")
+            return None
         # OpenCV uses BGR format, PIL uses RGB
-        color_coverted = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        color_coverted = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # Convert to PIL Image - from BGR to RGB format
         pil_image = Image.fromarray(color_coverted)
-        print(f"ImageModel.get_tk_photoimage(): pil_image: {pil_image}")
-        # Convert to Tkinter PhotoImage object
+        return pil_image
+
+    def opencv_to_tk(self, image):
+        """
+        Converts an OpenCV image to a tkinter photoimage object.
+
+        Parameters
+        image (ndarray): The OpenCV image to be converted.
+
+        Returns
+        ImageTk.PhotoImage: The converted tkinter photoimage object.
+        None if the input image is not a valid OpenCV image.
+        """
+        if not self.is_opencv_image(image):
+            print("Input image is not a valid OpenCV image.")
+            return None
+        pil_image = self.opencv_to_pil(image)
         tk_image = ImageTk.PhotoImage(image=pil_image)
-        print(f"ImageModel.get_tk_photoimage(): tk_image: {tk_image}")
         return tk_image
+
+    def is_opencv_image(self, image):
+        """
+        Checks if the given image is an OpenCV image.
+
+        OpenCV images are represented as numpy arrays. So we check if the image
+        is a numpy array and has either 2 or 3 dimensions. A 2D array is used
+        for greyscale images and a 3D array is used for color images.
+        This is the basic check to perform to see if the image is in OpenCV 
+        format. It does not check if the image is a valid OpenCV image.
+
+        Parameters
+        image (ndarray): The image to be checked.
+
+        Returns
+        bool: True if the image is an OpenCV image, False otherwise.
+        """
+        # Check if the image is an OpenCV image
+        is_opencv_img = False
+        if isinstance(image, np.ndarray):
+            if image.ndim == 2:  # 2D array - used for greyscale images
+                is_opencv_img = True
+            elif image.ndim == 3:  # 3D array - used for color images
+                is_opencv_img = True
+        return is_opencv_img
 
     # Saves the edited image to the given path.
     def save_image(self, path):
