@@ -60,7 +60,8 @@ class ImageController:
         image_path = self.view.open_image_file(start_path=image_dir)
         self.model.set_image_path(image_path)
         self.model.load_image(image_path)
-        image = self.model.get_image()
+        # image = self.model.get_image()
+        image = self.model.get_tk_photoimage()
         self.view.display_image(image)
 
     def save_image(self):
