@@ -138,7 +138,21 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
-        return self.opencv_to_tk(self.image)
+        if self.image is None:
+            return None  # If no image is loaded, return None
+
+        pil_image = self.opencv_to_pil(self.image)  # Convert OpenCV image to PIL format
+        if pil_image is None:
+            print("Error: Unable to convert OpenCV image to PIL format.")
+            return None
+        
+        return ImageTk.PhotoImage(pil_image)
+    
+    def is_opencv_image(self, image):
+        """
+        Checks if the given image is a valid OpenCV image (NumPy array).
+        """
+        return isinstance(image, np.ndarray)
 
     def opencv_to_pil(self, image):
         """
@@ -151,9 +165,12 @@ class ImageModel:
         PIL.Image: The converted PIL image.
         None if the input image is not a valid OpenCV image.
         """
-        if not self.is_opencv_image(image):
-            print("Input image is not a valid OpenCV image.")
+        if image is None:
+            print("Error: Image is None in opencv_to_pil.")
             return None
+
+        return Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    
         # OpenCV uses BGR format, PIL uses RGB
         color_coverted = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # Convert to PIL Image - from BGR to RGB format
@@ -264,14 +281,14 @@ class ImageModel:
 
         Parameters:
         slider_value (float): A scaling factor (in percentage) from the slider.
-                                For example, 50 means 50% of the original preview size,
-                                and 100 means full size.
+                            For example, 50 means 50% of the original preview size,
+                            and 100 means full size.
 
         Returns:
         ImageTk.PhotoImage: The resized preview image as a Tkinter-compatible PhotoImage.
                             Returns None if no cropped image is available.
         """
-        if self.image and self.crop_coords:
+        if self.image is not None and isinstance(self.image, np.ndarray) and self.crop_coords is not None:
             pil_image = self.opencv_to_pil(self.image)
             if pil_image is None:
                 print("Unable to convert image for preview resizing.")
