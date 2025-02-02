@@ -138,21 +138,7 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
-        if self.image is None:
-            return None  # If no image is loaded, return None
-
-        pil_image = self.opencv_to_pil(self.image)  # Convert OpenCV image to PIL format
-        if pil_image is None:
-            print("Error: Unable to convert OpenCV image to PIL format.")
-            return None
-        
-        return ImageTk.PhotoImage(pil_image)
-    
-    def is_opencv_image(self, image):
-        """
-        Checks if the given image is a valid OpenCV image (NumPy array).
-        """
-        return isinstance(image, np.ndarray)
+        return self.opencv_to_tk(self.image)
 
     def opencv_to_pil(self, image):
         """
@@ -165,12 +151,9 @@ class ImageModel:
         PIL.Image: The converted PIL image.
         None if the input image is not a valid OpenCV image.
         """
-        if image is None:
-            print("Error: Image is None in opencv_to_pil.")
+        if not self.is_opencv_image(image):
+            print("Input image is not a valid OpenCV image.")
             return None
-
-        return Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    
         # OpenCV uses BGR format, PIL uses RGB
         color_coverted = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # Convert to PIL Image - from BGR to RGB format
@@ -262,94 +245,3 @@ class ImageModel:
     def resize_image(self, width, height):
         # Resize image logic
         pass
-
-    # ============================================================================
-    # Q3 Assignment: Image Resizing
-    #
-    # a. Slider control for resizing the cropped image [which only affects the preview
-    #    while maintaining original dimensions for export].
-    # b. Update the display in real-time as the user moves the slider.
-    #
-    # This takes a slider value (as percentage %) returning a resized preview of the cropped image. 
-    # ============================================================================
-
-    def update_preview_resize(self, slider_value: float) -> ImageTk.PhotoImage:
-        """
-        Updates the preview of the cropped image based on a slider value.
-        This method resizes the cropped image for preview purposes only,
-        while keeping the original dimensions intact for export.
-
-        Parameters:
-        slider_value (float): A scaling factor (in percentage) from the slider.
-                            For example, 50 means 50% of the original preview size,
-                            and 100 means full size.
-
-        Returns:
-        ImageTk.PhotoImage: The resized preview image as a Tkinter-compatible PhotoImage.
-                            Returns None if no cropped image is available.
-        """
-        if self.image is not None and isinstance(self.image, np.ndarray) and self.crop_coords is not None:
-            pil_image = self.opencv_to_pil(self.image)
-            if pil_image is None:
-                print("Unable to convert image for preview resizing.")
-                return None
-            cropped = pil_image.crop(self.crop_coords)
-            original_width, original_height = cropped.size
-            new_width = int(original_width * slider_value / 100)
-            new_height = int(original_height * slider_value / 100)
-            resized_preview = cropped.resize((new_width, new_height), Image.ANTIALIAS)
-            preview_photo = ImageTk.PhotoImage(resized_preview)
-            return preview_photo
-        else:
-            print("No cropped image available for preview resizing.")
-            return None
-
-# =============================================================================
-# Tkinter Application creating a Slider Control for Image Resize
-# =============================================================================
-
-if __name__ == "__main__":
-    import tkinter as tk
-    from tkinter import Scale
-
-    # Create the main Tkinter window.
-    root = tk.Tk()
-    root.title("Image Resizing Preview with Slider")
-
-    # Create an instance of ImageModel and load an image.
-    model = ImageModel()
-    image_path = "path_to_your_image.jpg"  # Replace with the actual image path.
-    model.load_image(image_path)
-
-    # Set crop coordinates manually for demonstration (x, y, x2, y2).
-    # Adjust these values as needed.
-    model.set_crop_coords(50, 50, 300, 300)
-
-    # Create a Label widget to display the preview image.
-    preview_label = tk.Label(root)
-    preview_label.pack(pady=10)
-
-    # Define a callback function for the slider.
-    def on_slider_change(value):
-        slider_value = float(value)
-        preview = model.update_preview_resize(slider_value)
-        if preview is not None:
-            preview_label.config(image=preview)
-            # Keep a reference to avoid garbage collection.
-            preview_label.image = preview
-
-    # Create a slider widget.
-    slider = Scale(root,
-                   from_=10,      # Minimum percentage for the preview size.
-                   to=100,        # Maximum percentage for the preview size.
-                   orient=tk.HORIZONTAL,
-                   command=on_slider_change,
-                   label="Resize Preview (%)")
-    slider.set(100)  # Set initial slider value to 100% (full preview size).
-    slider.pack(pady=10)
-
-    # Initialize the preview by calling the slider callback manually.
-    on_slider_change(slider.get())
-
-    # Start the Tkinter event loop.
-    root.mainloop()
