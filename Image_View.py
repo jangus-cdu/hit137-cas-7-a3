@@ -144,10 +144,7 @@ class ImageView:
 
         self.root.minsize(int(self.main_window_width/2),
                           int(self.main_window_height/2))  # Minimum window size
-        # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
-        # self.root.attributes('-topmost', 1) # Place window on top of all others
-        # tkinter columconfigure and rowconfigure
-        # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
+
         self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
@@ -159,35 +156,46 @@ class ImageView:
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         self.bottom_frame = ttk.Frame(
             self.content_frame, width=1000, height=10, borderwidth=3, relief="ridge")
-
+        
         # Layout main Frames
         self.content_frame.grid(column=0, row=0, columnspan=7, sticky="nsew")
         self.controls_frame.grid(row=0, column=0, columnspan=1, sticky="nsew")
-        self.image_frame_original.grid(
-            row=0, column=1, columnspan=3,  sticky="nsew")
-        self.image_frame_edited.grid(
-            row=0, column=4,  columnspan=3, sticky="nsew")
+        self.image_frame_original.grid(row=0, column=1, columnspan=3, sticky="nsew")
+        self.image_frame_edited.grid(row=0, column=4, columnspan=3, sticky="nsew")
         self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
 
         # Create buttons
-        self.open_image_button = ttk.Button(
-            self.controls_frame, text="Open Image")
-        self.save_image_button = ttk.Button(
-            self.controls_frame, text="Save Image")
-        self.crop_image_button = ttk.Button(
-            self.controls_frame, text="Crop Image")
-        self.rotate_image_button = ttk.Button(
-            self.controls_frame, text="Rotate Image")
+        self.open_image_button = ttk.Button(self.controls_frame, text="Open Image")
+        self.save_image_button = ttk.Button(self.controls_frame, text="Save Image")
+        self.crop_image_button = ttk.Button(self.controls_frame, text="Crop Image")
+        self.rotate_image_button = ttk.Button(self.controls_frame, text="Rotate Image")
+
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
-        self.quit_button = ttk.Button(
-            self.controls_frame, text="QUIT", style='Quit.TButton')
+        self.quit_button = ttk.Button(self.controls_frame, text="QUIT", style='Quit.TButton')
 
-        # Create Sliders
-        self.resize_image_label = ttk.Label(
-            self.controls_frame, text="Resize Image")
+        # Label for the preview resize slider
+        self.resize_image_label = ttk.Label(self.controls_frame, text="Resize Preview (%)")
         self.resize_image_slider = ttk.Scale(
-            self.controls_frame, from_=0, to=100, orient="horizontal")
+            self.controls_frame,
+            from_=10,  # Minimum 10%
+            to=100,    # Maximum 100%
+            orient="horizontal",
+            command=self.on_preview_resize_slider_change
+        )
+
+        # Set default to 100% (full preview size)
+        self.resize_image_slider.set(100)
+
+    def on_preview_resize_slider_change(self, value):
+        """
+        Calls the controller to update the preview size when the slider is moved.
+        """
+        slider_value = float(value)
+        if hasattr(self, 'controller') and self.controller:
+            self.controller.update_preview_resize(slider_value)
+        else:
+            print("Controller is not yet assigned in ImageView.")
 
         # Layout Control Frame Widgets
         self.open_image_button.grid(row=0)
@@ -199,15 +207,12 @@ class ImageView:
         self.quit_button.grid(row=6)
 
         # Create Image Frame Widgets
-        self.image_original_title = ttk.Label(
-            self.image_frame_original, text="Original Image")
-        self.image_canvas_original = tk.Canvas(
-            self.image_frame_original, bg="white", cursor="cross", height=0, width=0)
-
-        self.image_edited_title = ttk.Label(
-            self.image_frame_edited, text="Edited Image")
-        self.image_label_edited = ttk.Label(
-            self.image_frame_edited, text="Image_Label_Edited")
+        self.image_original_title = ttk.Label(self.image_frame_original, text="Original Image")
+        self.image_canvas_original = tk.Canvas(self.image_frame_original, bg="white", cursor="cross", height=0, width=0)
+        self.image_canvas_original.grid(row=1, sticky="nsew") 
+        
+        self.image_edited_title = ttk.Label(self.image_frame_edited, text="Edited Image")
+        self.image_label_edited = ttk.Label(self.image_frame_edited, text="Image_Label_Edited")
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
@@ -216,18 +221,12 @@ class ImageView:
         self.image_label_edited.grid(row=1, sticky="nsew")
 
         # Create Bottom Frame Widgets
-        self.bottom_label_0 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 0")
-        self.bottom_label_1 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 1")
-        self.bottom_label_2 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 2")
-        self.bottom_label_3 = tk.Label(
-            self.bottom_frame, text="Bottom Label 3")
-        self.bottom_label_4 = tk.Label(
-            self.bottom_frame, text="Bottom Label 4")
-        self.bottom_label_5 = tk.Label(
-            self.bottom_frame, text="Bottom Label 5")
+        self.bottom_label_0 = ttk.Label(self.bottom_frame, text="Bottom Label 0")
+        self.bottom_label_1 = ttk.Label(self.bottom_frame, text="Bottom Label 1")
+        self.bottom_label_2 = ttk.Label(self.bottom_frame, text="Bottom Label 2")
+        self.bottom_label_3 = tk.Label(self.bottom_frame, text="Bottom Label 3")
+        self.bottom_label_4 = tk.Label(self.bottom_frame, text="Bottom Label 4")
+        self.bottom_label_5 = tk.Label(self.bottom_frame, text="Bottom Label 5")
 
         # Layout Bottom Frame Widgets
         self.bottom_label_0.grid(row=0, column=0, sticky="w")

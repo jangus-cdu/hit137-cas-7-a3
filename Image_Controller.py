@@ -91,6 +91,14 @@ class ImageController:
         if cropped_image:
             self.view.update_edited_image(cropped_image)
 
+    def update_preview_resize(self, slider_value):
+        """
+        Gets the resized preview image from the model and updates the view.
+        """
+        preview = self.model.update_preview_resize(slider_value)
+        if preview:
+             self.view.update_edited_image(preview)
+
     def resize_image(self):
         # Handle resizing image
         print("Resizing image")
