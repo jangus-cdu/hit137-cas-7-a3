@@ -143,7 +143,8 @@ class ImageView:
                          height=self.main_window_height, bg="skyblue")
 
         self.root.minsize(int(self.main_window_width/2),
-                          int(self.main_window_height/2))  # Minimum window size
+                          # Minimum window size
+                          int(self.main_window_height/2))
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
         # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
@@ -298,10 +299,6 @@ class ImageView:
                                   height=self.main_window_height)
         self.image_frame_original.config(width=image.width(),
                                          height=image.height())
-        # if image.width() > self.root.winfo_width()/2:
-        # self.root.config(width=image.width())
-        # if image.height() > self.root.winfo_height():
-        # self.root.config(height=image.height())
 
         # Reset the canvas and display the image
         self.image_canvas_original.delete("all")
@@ -309,6 +306,7 @@ class ImageView:
                                           height=image.height())
         self.image_canvas_original.create_image(
             0, 0, anchor=tk.NW, image=image)
+        self.image_canvas_original.image = image
         # Now update the edited image to display the same image
         self.update_edited_image(image)
 
