@@ -301,11 +301,20 @@ class ImageModel:
 
     def rotate_image(self, angle):
         # Rotate image logic
+        # angle is the amount to rotate the image by
         # TODO: Image seems to rotate in opposite direction to rotation angle
         # Need to fix so +90 deg rotates cw, -90 deg rotates ccw
+        if angle == 0:
+            return  # No rotation required
+        # Set the stored rotation of the image
+        self.rotation_angle = (self.rotation_angle + angle) % 360
+        if self.rotation_angle < 0:
+            self.rotation_angle += 360
 
         print(f"ImageModel.rotate_image() - angle: {angle}")
-        self.rotation_angle = angle
+        print(
+            f"ImageModel.rotate_image() - self.rotation_angle: {self.rotation_angle}")
+
         img = self.edited_image.copy()
         # Get current image dimensions
         height, width = img.shape[:2]
@@ -313,11 +322,11 @@ class ImageModel:
             f"ImageModel.rotate_image() - edited_image dimensions: w: {width}, h: {height}")
         # Calculate Centre coordinates
         image_centre = (width // 2, height // 2)
-        # Get rotation matrix
+        # Get rotation matrix - Positive values mean counter-clockwise rotation.
+        # Convert standard angle - 0 to +360 in clockwise direction to opposite
+        # for cv2.getRotationMatrix2D() as it uses + angle for ccw rotation
+        angle = -1 * angle
         rotation_matrix = cv2.getRotationMatrix2D(image_centre, angle, 1.0)
-
-        # Get cos and sin values from the rotation matrix
-        # cos, sin = abs(rotation_matrix[0, 0]), abs(rotation_matrix[0, 1])
 
         # Get cos and sin values from the rotation matrix
         rotated_cos = abs(rotation_matrix[0, 0])
@@ -329,20 +338,18 @@ class ImageModel:
         print(f"ImageModel.rotate_image() - bound_width: {
               bound_width}, bound_height: {bound_height}")
 
-        # Subtract old image centre (bringing image back to original position)
-        # and adding the new image centre coordinates
+        # Re-centre the image within the new bounds
         rotation_matrix[0, 2] += bound_width / 2 - image_centre[0]
         rotation_matrix[1, 2] += bound_height / 2 - image_centre[1]
 
         # Rotate image
-        rotated_image = cv2.warpAffine(
+        self.edited_image = cv2.warpAffine(
             img, rotation_matrix, (bound_width, bound_height), flags=cv2.INTER_NEAREST)
 
         # Update edited image
-        self.edited_image = rotated_image.copy()
+        # self.edited_image = rotated_image.copy()
 
         # Get rotated image dimensions
-        (rh, rw) = rotated_image.shape[:2]
+        (rh, rw) = self.edited_image.shape[:2]
         print(
             f"ImageModel.rotate_image() - rotated_image dimensions: w: {rw}, h: {rh}")
-        # return rotated_image
