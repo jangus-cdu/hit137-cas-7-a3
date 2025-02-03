@@ -43,6 +43,7 @@ class ImageController:
         self.view.open_image_button.config(command=self.load_image)
         self.view.save_image_button.config(command=self.save_image)
         self.view.crop_image_button.config(command=self.crop_image)
+        self.view.resize_image_slider.config(command=self.on_scale_change)
         self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):

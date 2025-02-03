@@ -64,6 +64,7 @@ class ImageModel:
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
         self.crop_coords = None  # Coordinates for cropping the image.
+        self.scale_factor = 1.0  # Factor for scaling the image
 
     def set_image_path(self, path):
         """
@@ -115,6 +116,7 @@ class ImageModel:
         print(f"ImageModel.load_image(): Loading image from: {image_path}")
         # self.image = ImageTk.PhotoImage(Image.open(self.image_path))
         self.image = cv2.imread(image_path)
+        self.edited_image = self.image.copy()
         # print(f"ImageModel.load_image(): Loaded image: {self.image}")
 
     def get_image(self):
