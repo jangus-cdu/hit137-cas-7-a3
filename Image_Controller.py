@@ -7,6 +7,8 @@
 # application. It notifies the View when the data changes, so the View can
 # update itself accordingly.
 
+from PIL import Image, ImageTk
+
 
 class ImageController:
     """
@@ -43,6 +45,10 @@ class ImageController:
         self.view.open_image_button.config(command=self.load_image)
         self.view.save_image_button.config(command=self.save_image)
         self.view.crop_image_button.config(command=self.crop_image)
+        self.view.rotate_image_left_button.config(
+            command=self.rotate_image_left)
+        self.view.rotate_image_right_button.config(
+            command=self.rotate_image_right)
         self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):
@@ -99,4 +105,52 @@ class ImageController:
     def set_window_size(self):
         # Handle setting window size
         print("Setting window size")
+        pass
+
+    def rotate_image_left(self):
+        # Handle rotating image left
+        print("Rotating image left")
+        # Rotate image anti-clockwise 90 degrees
+        # current_angle = self.model.get_rotation_angle()
+        # if current_angle - 90 < -360:
+        #     new_angle = current_angle - 90 + 360
+        # elif current_angle - 90 == -360:
+        #     new_angle = 0
+        # else:
+        #     new_angle = current_angle - 90
+        # self.model.set_rotation_angle(new_angle)
+        # self.model.set_rotation_angle(-90)
+        # Get the rotated image from the model - image in opencv format
+        self.model.rotate_image(-90)
+        tk_img = self.model.get_edited_image_as_tk()
+
+        # Convert edited_image in opencv format to pil image
+        # pil_img = self.model.opencv_to_pil(edit_image)
+        # Convert the rotated image to tkinter photo format
+        # tk_img = ImageTk.PhotoImage(pil_img)
+
+        # tk_img = self.model.opencv_to_tk(edit_image)
+        # Update the view with the edited image
+        self.view.update_edited_image(tk_img)
+
+    def rotate_image_right(self):
+        # Handle rotating image right
+        print("Rotating image right")
+        # Rotate image clockwise 90 degrees
+        # current_angle = self.model.get_rotation_angle()
+        # if current_angle + 90 > 360:
+        #     new_angle = current_angle + 90 - 360
+        # elif current_angle + 90 == 360:
+        #     new_angle = 0
+        # else:
+        #     new_angle = current_angle + 90
+        # self.model.set_rotation_angle(new_angle)
+        # Get the rotated image from the model - image in opencv format
+        # rotated_image = self.model.get_edited_image()
+        # Convert the rotated image to tkinter photo format
+        # tk_img = self.model.opencv_to_tk(rotated_image)
+        self.model.rotate_image(90)
+        tk_img = self.model.get_edited_image_as_tk()
+        # Update the view with the edited image
+        self.view.update_edited_image(tk_img)
         pass

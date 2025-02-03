@@ -143,7 +143,8 @@ class ImageView:
                          height=self.main_window_height, bg="skyblue")
 
         self.root.minsize(int(self.main_window_width/2),
-                          int(self.main_window_height/2))  # Minimum window size
+                          # Minimum window size
+                          int(self.main_window_height/2))
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
         # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
@@ -176,8 +177,10 @@ class ImageView:
             self.controls_frame, text="Save Image")
         self.crop_image_button = ttk.Button(
             self.controls_frame, text="Crop Image")
-        self.rotate_image_button = ttk.Button(
-            self.controls_frame, text="Rotate Image")
+        self.rotate_image_left_button = ttk.Button(
+            self.controls_frame, text="Rotate Image Left")
+        self.rotate_image_right_button = ttk.Button(
+            self.controls_frame, text="Rotate Image Right")
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
         self.quit_button = ttk.Button(
@@ -195,7 +198,8 @@ class ImageView:
         self.crop_image_button.grid(row=2)
         self.resize_image_label.grid(row=3)
         self.resize_image_slider.grid(row=4)
-        self.rotate_image_button.grid(row=5)
+        self.rotate_image_left_button.grid(row=5, column=0)
+        self.rotate_image_right_button.grid(row=5, column=1)
         self.quit_button.grid(row=6)
 
         # Create Image Frame Widgets
@@ -207,13 +211,14 @@ class ImageView:
         self.image_edited_title = ttk.Label(
             self.image_frame_edited, text="Edited Image")
         self.image_label_edited = ttk.Label(
-            self.image_frame_edited, text="Image_Label_Edited")
+            self.image_frame_edited)
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
         self.image_edited_title.grid(row=0, sticky="w")
-        self.image_label_edited.grid(row=1, sticky="nsew")
+        # self.image_label_edited.grid(row=1, sticky="nsew")
+        self.image_label_edited.grid(row=1)
 
         # Create Bottom Frame Widgets
         self.bottom_label_0 = ttk.Label(
@@ -292,16 +297,10 @@ class ImageView:
         print(f"image.width(): {image.width()}, "
               f"image.height(): {image.height()}")
         # Resize the window to fit the image
-        # self.root.config(width=self.main_window_width,
-        #  height=self.main_window_height)
         self.content_frame.config(width=self.main_window_width,
                                   height=self.main_window_height)
         self.image_frame_original.config(width=image.width(),
                                          height=image.height())
-        # if image.width() > self.root.winfo_width()/2:
-        # self.root.config(width=image.width())
-        # if image.height() > self.root.winfo_height():
-        # self.root.config(height=image.height())
 
         # Reset the canvas and display the image
         self.image_canvas_original.delete("all")
@@ -309,6 +308,8 @@ class ImageView:
                                           height=image.height())
         self.image_canvas_original.create_image(
             0, 0, anchor=tk.NW, image=image)
+        self.image_canvas_original.image = image
+
         # Now update the edited image to display the same image
         self.update_edited_image(image)
 
@@ -390,8 +391,11 @@ class ImageView:
         Returns
         None
         """
-        print(
-            f"ImageView.update_edited_image(): Updating edited image: {image}")
+        # print(
+        # f"ImageView.update_edited_image(): Updating edited image: {image}")
+        print(f"ImageView.update_edited_image():Displaying image: {image}")
+        print(f"image.width(): {image.width()}, "
+              f"image.height(): {image.height()}")
         self.image_frame_edited.config(width=image.width(),
                                        height=image.height())
         self.image_label_edited.configure(image=image)
