@@ -43,6 +43,7 @@ class ImageController:
         self.view.open_image_button.config(command=self.load_image)
         self.view.save_image_button.config(command=self.save_image)
         self.view.crop_image_button.config(command=self.crop_image)
+        self.view.resize_image_slider.config(command=self.on_scale_change)
         self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):
@@ -64,6 +65,26 @@ class ImageController:
         image = self.model.get_tk_photoimage()
         self.view.display_image(image)
 
+    def on_scale_change(self, value):
+        """
+        Handles scaling the current image.
+    
+        Sets the scale factor in the model and scales the image.
+        The scaled image is then displayed in the view.
+    
+        Returns:
+            None
+        """
+        print("Scaling image")
+        # print(f"ImageController.on_scale_change(): Scaling image by: {value}")
+        # Convert value returned from the slider control from text value to a float fractional value
+        scale_factor = float(float(value)/100.0)
+        self.model.set_scale_factor(scale_factor)
+        # Get the scaled image as a PhotoImage
+        tk_img = self.model.get_edited_scaled_image_as_tk()
+        # Update the view with the scaled image
+        self.view.update_edited_image(tk_img)
+        
     def save_image(self):
         # Handle saving image
         print("Saving image")
@@ -100,3 +121,4 @@ class ImageController:
         # Handle setting window size
         print("Setting window size")
         pass
+    

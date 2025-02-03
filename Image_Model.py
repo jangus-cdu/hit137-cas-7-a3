@@ -64,6 +64,7 @@ class ImageModel:
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
         self.crop_coords = None  # Coordinates for cropping the image.
+        self.scale_factor = 1.0  # Factor for scaling the image
 
     def set_image_path(self, path):
         """
@@ -115,6 +116,7 @@ class ImageModel:
         print(f"ImageModel.load_image(): Loading image from: {image_path}")
         # self.image = ImageTk.PhotoImage(Image.open(self.image_path))
         self.image = cv2.imread(image_path)
+        self.edited_image = self.image.copy()
         # print(f"ImageModel.load_image(): Loaded image: {self.image}")
 
     def get_image(self):
@@ -126,6 +128,16 @@ class ImageModel:
         """
         print(f"ImageModel.get_image(): Returning image: {self.image}")
         return self.image
+    
+    def get_edited_image(self):
+        """
+        Gets the edited image object.
+
+        Returns:
+            OpenCV image: The edited image object.
+        """
+        # print(f"ImageModel.get_edited_image(): Returning edited image: {self.edited_image}")
+        return self.edited_image
 
     def get_tk_photoimage(self):
         """
@@ -139,6 +151,30 @@ class ImageModel:
         ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
         return self.opencv_to_tk(self.image)
+    
+    def get_edited_scaled_image_as_tk(self):
+        """
+        Gets the edited scaled image object as a tkinter photoimage object.
+
+        Returns:
+            ImageTk.PhotoImage: The edited scaled image object in PhotoImage format.
+        """
+        if self.scale_factor == 1.0:  # No need for scale operation if scale_factor == 1
+            return self.opencv_to_tk(self.edited_image)
+
+        # Convert edited_image in opencv format to pil image
+        pil_img = self.opencv_to_pil(self.edited_image)
+
+        # Calculate scaled dimensions from stored scale_factor
+        scaled_width = int(pil_img.width * self.scale_factor)
+        scaled_height = int(pil_img.height * self.scale_factor)
+
+        # Create a copy of the scaled image
+        resz_img = pil_img.resize((scaled_width, scaled_height))
+
+        # Convert to PhotoImage type
+        tk_img = ImageTk.PhotoImage(resz_img)
+        return tk_img
 
     def opencv_to_pil(self, image):
         """
@@ -222,6 +258,18 @@ class ImageModel:
         None
         """
         self.crop_coords = (start_x, start_y, end_x, end_y)
+
+    def set_scale_factor(self, scale_factor):
+        """
+        Sets the scale factor for scaling the image.
+
+        Parameters:
+            scale_factor (float): The scale factor to be set.
+
+        Returns:
+            None
+        """
+        self.scale_factor = scale_factor
 
     def get_cropped_image(self) -> ImageTk.PhotoImage:
         """
