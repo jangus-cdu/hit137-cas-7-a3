@@ -108,12 +108,14 @@ class ImageView:
         self.crop_image_button = None  # Button to crop the image.
         self.rotate_image_left_button = None  # Button to rotate the image.
         self.rotate_image_right_button = None  # Button to rotate the image.
+        self.reset_image_button = None  # Button to reset the image.
         self.quit_button = None  # Button to quit the application.
 
         # Control Frame Labels
         self.KEYBOARD_SHORTCUTS_TEXT = f"Keyboard Shortcuts:\n" \
             f"Control-O: Open\n" \
             f"Control-S: Save\n" \
+            f"Control-R: Reset\n" \
             f"Control-Q: Quit\n" \
             f"Left Arrow: Rotate Left\n" \
             f"Right Arrow: Rotate Right\n" \
@@ -216,6 +218,8 @@ class ImageView:
             button_text = ""
         self.rotate_image_right_button = tk.Button(
             self.controls_frame, image=self.icon_rotate_right, text=button_text)
+        self.reset_image_button = ttk.Button(
+            self.controls_frame, text="Reset Image")
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
         self.quit_button = ttk.Button(
@@ -246,12 +250,14 @@ class ImageView:
         self.resize_image_slider_value_label.grid(
             row=5, column=0, columnspan=2, sticky="nsew")
         self.rotate_image_left_button.grid(
-            row=6, column=0, sticky="nsew", ipadx=3, ipady=3)
+            row=6, column=0, sticky="nsew", ipadx=5, ipady=5)
         self.rotate_image_right_button.grid(
-            row=6, column=1, sticky="nsew", ipadx=3, ipady=3)
-        self.quit_button.grid(row=7, column=0, columnspan=2, sticky="nsew")
+            row=6, column=1, sticky="nsew", ipadx=5, ipady=5)
+        self.reset_image_button.grid(
+            row=7, column=0, columnspan=2, sticky="nsew")
+        self.quit_button.grid(row=8, column=0, columnspan=2, sticky="nsew")
         self.kbd_shortcuts_label.grid(
-            row=8, column=0, columnspan=2, sticky="nsew")
+            row=9, column=0, columnspan=2, sticky="nsew")
 
         # Create Image Frame Widgets
         self.image_original_title = ttk.Label(
@@ -326,6 +332,34 @@ class ImageView:
         print(f"ImageView.open_image_file(): Start path: {start_path}")
         file_path = filedialog.askopenfilename(
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
+        print(f"Image_View.open_file(): Selected file: {file_path}")
+        return file_path
+
+    def save_edited_image(self, initial_dir, initial_file) -> str:
+        """
+        Opens a file dialog to select an image file and returns the file path.
+
+        Parameters
+        start_path (str): The initial directory path for the file dialog.
+
+        Returns
+        str: The file path of the selected image.
+        """
+        print("ImageView.save_edited_image(): Opening file save dialog...")
+        # initial_dir = self.model.get_edited_image_dir()
+        print(f"ImageView.save_edited_image(): Start path: {initial_dir}")
+        if initial_dir == None:
+            initial_dir = "/"
+        if initial_file == None:
+            initial_file = "edited_image"
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".jpg",
+            filetypes=(("jpeg files", "*.jpg"),
+                       ("png files", "*.png"), ("all files", "*.*")),
+            initialdir=initial_dir,
+            initialfile=initial_file,
+            title="Save file",
+        )
         print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
@@ -485,7 +519,7 @@ class ImageView:
         return self.image_resize_slider.get()
 
     def set_resize_image_slider_value(self, value):
-        self.image_resize_slider.set(value)
+        self.resize_image_slider.set(value)
 
     def increment_resize_image_slider_value(self):
         current_value = self.resize_image_slider.get()

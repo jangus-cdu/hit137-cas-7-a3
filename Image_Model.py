@@ -63,9 +63,23 @@ class ImageModel:
         self.image = None  # The image object - an OpenCV image.
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
+        self.edited_image_dir = self.image_dir  # Edited image directory.
+        self.edited_image_path = None  # Path to the edited image file.
+        self.edited_image_name = None  # Save the name of the edited image.
         self.crop_coords = None  # Coordinates for cropping the image.
         self.rotation_angle = 0  # Angle for rotating the image.
         self.scale_factor = 1.0  # Factor for scaling the image
+
+    def get_image_path(self):
+        """
+        Gets the path to the image file.
+
+        Returns
+        str: The path to the image file.
+        """
+        print(f"ImageModel.get_image_path(): Returning image path: "
+              f"{self.image_path}")
+        return self.image_path
 
     def set_image_path(self, path):
         """
@@ -81,17 +95,6 @@ class ImageModel:
         self.image_path = path
         self.image_dir = os.path.dirname(self.image_path)
 
-    def get_image_path(self):
-        """
-        Gets the path to the image file.
-
-        Returns
-        str: The path to the image file.
-        """
-        print(f"ImageModel.get_image_path(): Returning image path: "
-              f"{self.image_path}")
-        return self.image_path
-
     def get_image_dir(self):
         """
         Gets the directory of the image file.
@@ -102,6 +105,24 @@ class ImageModel:
         print(f"ImageModel.get_image_dir(): Returning image directory: "
               f"{self.image_dir}")
         return self.image_dir
+
+    def get_edited_image_path(self):
+        return self.edited_image_path
+
+    def set_edited_image_path(self, path):
+        self.edited_image_path = path
+
+    def get_edited_image_dir(self):
+        return self.edited_image_dir
+
+    def set_edited_image_dir(self, dir):
+        self.edited_image_dir = dir
+
+    def get_edited_image_name(self):
+        return self.edited_image_name
+
+    def set_edited_image_name(self, name):
+        self.edited_image_name = name
 
     def load_image(self, image_path):
         """
@@ -115,10 +136,10 @@ class ImageModel:
         """
         # Load image logic
         print(f"ImageModel.load_image(): Loading image from: {image_path}")
-        # self.image = ImageTk.PhotoImage(Image.open(self.image_path))
+        # Set edited image path to loaded image path by default
+        self.set_edited_image_dir(os.path.dirname(image_path))
         self.image = cv2.imread(image_path)
         self.edited_image = self.image.copy()
-        # print(f"ImageModel.load_image(): Loaded image: {self.image}")
 
     def get_image(self):
         """
@@ -171,6 +192,32 @@ class ImageModel:
         if self.image is None:
             return None  # No image loaded yet
         return self.opencv_to_tk(self.image)
+
+    def get_edited_scaled_image_as_pil(self):
+        """
+        Gets the edited scaled image object as a PIL image object.
+
+        Returns:
+            PIL.Image: The converted PIL image object.
+        """
+        if self.scale_factor == 1.0:  # No need for scale operation if scale_factor == 1
+            return self.opencv_to_pil(self.edited_image)
+
+        # Convert edited_image in opencv format to pil image
+        pil_img = self.opencv_to_pil(self.edited_image)
+
+        # Calculate scaled dimensions from stored scale_factor
+        scaled_width = int(pil_img.width * self.scale_factor)
+        scaled_height = int(pil_img.height * self.scale_factor)
+
+        # Create a copy of the scaled image
+        resz_img = pil_img.resize((scaled_width, scaled_height))
+
+        # Convert to PhotoImage type
+        tk_img = ImageTk.PhotoImage(resz_img)
+        # Clean up unused images
+        pil_img = None
+        return resz_img
 
     def get_edited_scaled_image_as_tk(self):
         """
@@ -317,11 +364,11 @@ class ImageModel:
     def get_edited_image(self):
         """
         Gets the edited image object.
- 
+
         Returns
         ImageTk.PhotoImage: The edited image object or None if no image is loaded.
         """
-        return self.edited_image        
+        return self.edited_image
 
     # Resizes the image.
     def resize_image(self, width, height):
@@ -391,3 +438,23 @@ class ImageModel:
         (rh, rw) = self.edited_image.shape[:2]
         print(
             f"ImageModel.rotate_image() - rotated_image dimensions: w: {rw}, h: {rh}")
+
+    def reset_image(self):
+        # Reset all image edits
+        self.edited_image = None
+        self.edited_image = self.image.copy()
+        self.crop_coords = None
+        self.rotation_angle = 0
+        self.scale_factor = 1.0
+
+    def save_edited_image(self, image_path):
+        # Save edited image logic
+        print(f"ImageModel.save_edited_image(): Saving edited image to: {
+            image_path}")
+        self.set_edited_image_dir(os.path.dirname(image_path))
+        self.set_edited_image_name(os.path.basename(image_path))
+        self.set_edited_image_path(image_path)
+        image = self.get_edited_scaled_image_as_pil()
+        image.save(image_path)
+        print(f"ImageModel.save_edited_image(): Saved edited image to: {
+            image_path}")
