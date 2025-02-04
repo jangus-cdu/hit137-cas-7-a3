@@ -102,16 +102,40 @@ class ImageView:
         self.end_y = None  # End y coordinate on mouse release
         self.rect = None
 
-        # Buttons
+        # Control Frame Buttons
         self.open_image_button = None  # Button to open a file.
         self.save_image_button = None  # Button to save the image.
         self.crop_image_button = None  # Button to crop the image.
-        self.rotate_image_button = None  # Button to rotate the image.
+        self.rotate_image_left_button = None  # Button to rotate the image.
+        self.rotate_image_right_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
+
+        # Control Frame Labels
+        self.KEYBOARD_SHORTCUTS_TEXT = f"Keyboard Shortcuts:\n" \
+            f"Control-O: Open\n" \
+            f"Control-S: Save\n" \
+            f"Control-Q: Quit\n" \
+            f"Left Arrow: Rotate Left\n" \
+            f"Right Arrow: Rotate Right\n" \
+            f"Up Arrow: Expand Image Size\n" \
+            f"Down Arrow: Shrink Image Size\n" \
+            f"C: Crop Image\n"
+        self.kbd_shortcuts_label = None
+
+        # Button Icons
+        self.icon_rotate_left = None
+        self.icon_rotate_right = None
+        self.icon_rotate_left_path = "icons/rotate-left-24.png"
+        self.icon_rotate_right_path = "icons/rotate-right-24.png"
 
         # Sliders
         self.resize_image_label = None  # Label for the resize slider.
         self.resize_image_slider = None  # Slider to resize the edited image.
+        # Label for the slider value.
+        self.resize_image_slider_value_label = None
+        self.MAX_RESIZE_VALUE = 150
+        self.MIN_RESIZE_VALUE = 25
+        self.DEFAULT_RESIZE_VALUE = 100
 
         # Image View Labels
         self.image_original_title = None  # Indicates Original Image Frame
@@ -128,6 +152,9 @@ class ImageView:
         self.bottom_label_3 = None
         self.bottom_label_4 = None
         self.bottom_label_5 = None
+
+        # Load Button Icons
+        self.load_icons()
 
         # Call create widgets method
         self.create_widgets()
@@ -153,7 +180,7 @@ class ImageView:
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
-            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge")
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 6, 6))
         self.image_frame_original = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         self.image_frame_edited = ttk.Frame(
@@ -177,27 +204,54 @@ class ImageView:
             self.controls_frame, text="Save Image")
         self.crop_image_button = ttk.Button(
             self.controls_frame, text="Crop Image")
-        self.rotate_image_button = ttk.Button(
-            self.controls_frame, text="Rotate Image")
+        if self.icon_rotate_left == None:
+            button_text = "Rotate Image Left"
+        else:
+            button_text = ""
+        self.rotate_image_left_button = tk.Button(
+            self.controls_frame, image=self.icon_rotate_left, text=button_text)
+        if self.icon_rotate_right == None:
+            button_text = "Rotate Image Right"
+        else:
+            button_text = ""
+        self.rotate_image_right_button = tk.Button(
+            self.controls_frame, image=self.icon_rotate_right, text=button_text)
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
         self.quit_button = ttk.Button(
             self.controls_frame, text="QUIT", style='Quit.TButton')
-
+        self.kbd_shortcuts_label = ttk.Label(
+            self.controls_frame, text=self.KEYBOARD_SHORTCUTS_TEXT
+        )
         # Create Sliders
         self.resize_image_label = ttk.Label(
             self.controls_frame, text="Resize Image")
         self.resize_image_slider = ttk.Scale(
-            self.controls_frame, from_=0, to=100, orient="horizontal")
+            self.controls_frame, from_=self.MIN_RESIZE_VALUE, to=self.MAX_RESIZE_VALUE, orient="horizontal")
+        self.resize_image_slider.set(self.DEFAULT_RESIZE_VALUE)
+        self.resize_image_slider_value_label = ttk.Label(
+            self.controls_frame, text=f"Scale factor: {self.DEFAULT_RESIZE_VALUE}%")
 
         # Layout Control Frame Widgets
-        self.open_image_button.grid(row=0)
-        self.save_image_button.grid(row=1)
-        self.crop_image_button.grid(row=2)
-        self.resize_image_label.grid(row=3)
-        self.resize_image_slider.grid(row=4)
-        self.rotate_image_button.grid(row=5)
-        self.quit_button.grid(row=6)
+        self.open_image_button.grid(
+            row=0, column=0, columnspan=2, sticky="nsew")
+        self.save_image_button.grid(
+            row=1, column=0, columnspan=2, sticky="nsew")
+        self.crop_image_button.grid(
+            row=2, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_label.grid(
+            row=3, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider.grid(
+            row=4, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider_value_label.grid(
+            row=5, column=0, columnspan=2, sticky="nsew")
+        self.rotate_image_left_button.grid(
+            row=6, column=0, sticky="nsew", ipadx=3, ipady=3)
+        self.rotate_image_right_button.grid(
+            row=6, column=1, sticky="nsew", ipadx=3, ipady=3)
+        self.quit_button.grid(row=7, column=0, columnspan=2, sticky="nsew")
+        self.kbd_shortcuts_label.grid(
+            row=8, column=0, columnspan=2, sticky="nsew")
 
         # Create Image Frame Widgets
         self.image_original_title = ttk.Label(
@@ -208,13 +262,14 @@ class ImageView:
         self.image_edited_title = ttk.Label(
             self.image_frame_edited, text="Edited Image")
         self.image_label_edited = ttk.Label(
-            self.image_frame_edited, text="Image_Label_Edited")
+            self.image_frame_edited)
 
         # Layout Image Frame Widgets
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
         self.image_edited_title.grid(row=0, sticky="w")
-        self.image_label_edited.grid(row=1, sticky="nsew")
+        # self.image_label_edited.grid(row=1, sticky="nsew")
+        self.image_label_edited.grid(row=1)
 
         # Create Bottom Frame Widgets
         self.bottom_label_0 = ttk.Label(
@@ -248,6 +303,9 @@ class ImageView:
         self.content_frame.rowconfigure(1, weight=0)
         self.content_frame.rowconfigure(2, weight=0)
 
+        # self.controls_frame.columnconfigure(0, weight=1)
+        # self.controls_frame.rowconfigure(5, weight=1)
+
         self.bottom_frame.columnconfigure(0, weight=0)
         self.bottom_frame.columnconfigure(1, weight=1)
         self.bottom_frame.columnconfigure(4, weight=1)
@@ -271,13 +329,6 @@ class ImageView:
         print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
-        print("ImageView.open_image_file(): Opening file dialog...")
-        print(f"ImageView.open_image_file(): Start path: {start_path}")
-        file_path = filedialog.askopenfilename(
-            initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
-        print(f"Image_View.open_file(): Selected file: {file_path}")
-        return file_path
-
     def display_image(self, image):
         """
         Displays the image in the original image frame.
@@ -293,20 +344,22 @@ class ImageView:
         print(f"image.width(): {image.width()}, "
               f"image.height(): {image.height()}")
         # Resize the window to fit the image
-        # self.root.config(width=self.main_window_width,
-        #  height=self.main_window_height)
         self.content_frame.config(width=self.main_window_width,
                                   height=self.main_window_height)
         self.image_frame_original.config(width=image.width(),
                                          height=image.height())
 
         # Reset the canvas and display the image
+        # Clear the current stored image so it can be garbage collected and
+        # free up memory
+        self.image_canvas_original.image = None
         self.image_canvas_original.delete("all")
         self.image_canvas_original.config(width=image.width(),
                                           height=image.height())
         self.image_canvas_original.create_image(
             0, 0, anchor=tk.NW, image=image)
         self.image_canvas_original.image = image
+
         # Now update the edited image to display the same image
         self.update_edited_image(image)
 
@@ -362,7 +415,7 @@ class ImageView:
         This method is used to finalize the cropping rectangle.
 
         Parameters
-        event (tk.Event): 
+        event (tk.Event):
             The event object containing the mouse release coordinates.
 
         Returns
@@ -388,8 +441,14 @@ class ImageView:
         Returns
         None
         """
-        print(
-            f"ImageView.update_edited_image(): Updating edited image: {image}")
+        # print(
+        # f"ImageView.update_edited_image(): Updating edited image: {image}")
+        print(f"ImageView.update_edited_image():Displaying image: {image}")
+        print(f"image.width(): {image.width()}, "
+              f"image.height(): {image.height()}")
+        # Clear the current stored image so it can be garbage collected and
+        # free up memory
+        self.image_label_edited.image = None
         self.image_frame_edited.config(width=image.width(),
                                        height=image.height())
         self.image_label_edited.configure(image=image)
@@ -398,3 +457,46 @@ class ImageView:
     def update_image(self, image):
         # Update displayed image
         pass
+
+    def load_icons(self):
+        # Load icons
+        print(f"ImageView.load_icons(): Loading icons...")
+        # Load images using Pillow
+        try:
+            image = Image.open(self.icon_rotate_left_path)
+            self.icon_rotate_left = ImageTk.PhotoImage(image)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            self.icon_rotate_left = None
+        try:
+            image = Image.open(self.icon_rotate_right_path)
+            self.icon_rotate_right = ImageTk.PhotoImage(image)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            self.icon_rotate_right = None
+
+    def get_max_scale_value(self):
+        return self.MAX_RESIZE_VALUE
+
+    def get_min_scale_value(self):
+        return self.MIN_RESIZE_VALUE
+
+    def get_resize_image_slider_value(self):
+        return self.image_resize_slider.get()
+
+    def set_resize_image_slider_value(self, value):
+        self.image_resize_slider.set(value)
+
+    def increment_resize_image_slider_value(self):
+        current_value = self.resize_image_slider.get()
+        new_value = int(current_value) + 1
+        if new_value > self.MAX_RESIZE_VALUE:
+            new_value = self.MAX_RESIZE_VALUE
+        self.resize_image_slider.set(new_value)
+
+    def decrement_resize_image_slider_value(self):
+        current_value = self.resize_image_slider.get()
+        new_value = int(current_value) - 1
+        if new_value < self.MIN_RESIZE_VALUE:
+            new_value = self.MIN_RESIZE_VALUE
+        self.resize_image_slider.set(new_value)

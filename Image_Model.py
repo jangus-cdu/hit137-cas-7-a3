@@ -64,6 +64,7 @@ class ImageModel:
         self.original_image = None  # The original image object.
         self.edited_image = None  # The edited image object.
         self.crop_coords = None  # Coordinates for cropping the image.
+        self.rotation_angle = 0  # Angle for rotating the image.
         self.scale_factor = 1.0  # Factor for scaling the image
 
     def set_image_path(self, path):
@@ -128,16 +129,33 @@ class ImageModel:
         """
         print(f"ImageModel.get_image(): Returning image: {self.image}")
         return self.image
-    
+
     def get_edited_image(self):
         """
         Gets the edited image object.
 
-        Returns:
-            OpenCV image: The edited image object.
+        Returns
+        ImageTk.PhotoImage: The edited image object or None if no image is loaded.
         """
-        # print(f"ImageModel.get_edited_image(): Returning edited image: {self.edited_image}")
         return self.edited_image
+
+    def get_edited_image_as_tk(self):
+        """
+        Gets the edited image object as a tkinter photoimage object.
+
+        Applies any scaling or rotation before converting to tkinter photoimage.
+
+        Returns
+        ImageTk.PhotoImage: The edited scaled image object in PhotoImage format.
+        """
+        if self.image is None:
+            return None  # No image loaded yet
+        # Convert edited_image in opencv format to pil image
+        # pil_img = self.opencv_to_pil(self.edited_image)
+        # tk_img = ImageTk.PhotoImage(pil_img)
+        # pil_img = None  # Clean up unsued image
+        tk_img = self.get_edited_scaled_image_as_tk()
+        return tk_img
 
     def get_tk_photoimage(self):
         """
@@ -150,8 +168,10 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
+        if self.image is None:
+            return None  # No image loaded yet
         return self.opencv_to_tk(self.image)
-    
+
     def get_edited_scaled_image_as_tk(self):
         """
         Gets the edited scaled image object as a tkinter photoimage object.
@@ -174,6 +194,9 @@ class ImageModel:
 
         # Convert to PhotoImage type
         tk_img = ImageTk.PhotoImage(resz_img)
+        # Clean up unused images
+        pil_img = None
+        resz_img = None
         return tk_img
 
     def opencv_to_pil(self, image):
@@ -212,6 +235,7 @@ class ImageModel:
             return None
         pil_image = self.opencv_to_pil(image)
         tk_image = ImageTk.PhotoImage(image=pil_image)
+        pil_image = None  # Clean up unused image
         return tk_image
 
     def is_opencv_image(self, image):
@@ -242,6 +266,7 @@ class ImageModel:
     # Saves the edited image to the given path.
     def save_image(self, path):
         # Save image logic
+        print(f"ImageModel.save_image(): Saving image to: {path}")
         pass
 
     def set_crop_coords(self, start_x, start_y, end_x, end_y):
@@ -302,3 +327,67 @@ class ImageModel:
     def resize_image(self, width, height):
         # Resize image logic
         pass
+
+    def set_rotation_angle(self, angle):
+        # Set rotation angle
+        print(f"ImageModel.set_rotation_angle(): current angle: {
+              self.rotation_angle}")
+        print(
+            f"ImageModel.set_rotation_angle(): Setting rotation angle to: {angle}")
+        self.rotation_angle = angle
+
+    def get_rotation_angle(self):
+        return self.rotation_angle
+
+    def rotate_image(self, angle):
+        # Rotate image logic
+        # angle is the amount to rotate the image by
+        # TODO: Image seems to rotate in opposite direction to rotation angle
+        # Need to fix so +90 deg rotates cw, -90 deg rotates ccw
+        if angle == 0:
+            return  # No rotation required
+        # Set the stored rotation of the image
+        self.rotation_angle = (self.rotation_angle + angle) % 360
+        if self.rotation_angle < 0:
+            self.rotation_angle += 360
+
+        print(f"ImageModel.rotate_image() - angle: {angle}")
+        print(
+            f"ImageModel.rotate_image() - self.rotation_angle: {self.rotation_angle}")
+
+        img = self.edited_image.copy()
+        # Get current image dimensions
+        height, width = img.shape[:2]
+        print(
+            f"ImageModel.rotate_image() - edited_image dimensions: w: {width}, h: {height}")
+        # Calculate Centre coordinates
+        image_centre = (width // 2, height // 2)
+        # Get rotation matrix - Positive values mean counter-clockwise rotation.
+        # Convert standard angle - 0 to +360 in clockwise direction to opposite
+        # for cv2.getRotationMatrix2D() as it uses + angle for ccw rotation
+        angle = -1 * angle
+        rotation_matrix = cv2.getRotationMatrix2D(image_centre, angle, 1.0)
+
+        # Get cos and sin values from the rotation matrix
+        rotated_cos = abs(rotation_matrix[0, 0])
+        rotated_sin = abs(rotation_matrix[0, 1])
+
+        # Find the new width and height bounds of the rotated image
+        bound_width = int((height * rotated_sin) + (width * rotated_cos))
+        bound_height = int((height * rotated_cos) + (width * rotated_sin))
+        print(f"ImageModel.rotate_image() - bound_width: {
+              bound_width}, bound_height: {bound_height}")
+
+        # Re-centre the image within the new bounds
+        rotation_matrix[0, 2] += bound_width / 2 - image_centre[0]
+        rotation_matrix[1, 2] += bound_height / 2 - image_centre[1]
+
+        # Rotate image
+        self.edited_image = cv2.warpAffine(
+            img, rotation_matrix, (bound_width, bound_height), flags=cv2.INTER_NEAREST)
+        img = None  # Clean up unsued image
+
+        # Get rotated image dimensions
+        (rh, rw) = self.edited_image.shape[:2]
+        print(
+            f"ImageModel.rotate_image() - rotated_image dimensions: w: {rw}, h: {rh}")
