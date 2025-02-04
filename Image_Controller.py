@@ -79,7 +79,6 @@ class ImageController:
         image_path = self.view.open_image_file(start_path=image_dir)
         self.model.set_image_path(image_path)
         self.model.load_image(image_path)
-        # image = self.model.get_image()
         image = self.model.get_tk_photoimage()
         self.view.display_image(image)
 
@@ -103,13 +102,6 @@ class ImageController:
         # Convert the slider value to a scale factor
         scale_factor = scale_value/100.0
         self.resize_image(scale_factor)
-
-        # # Set the model scale factor
-        # self.model.set_scale_factor(scale_factor)
-        # # Get the scaled image as a PhotoImage
-        # tk_img = self.model.get_edited_scaled_image_as_tk()
-        # # Update the view with the scaled image
-        # self.view.update_edited_image(tk_img)
 
     def save_image(self):
         # Handle saving image
@@ -181,42 +173,17 @@ class ImageController:
         CONTROL_KEY_STATE = 0x0004
         if event.keysym == "Left":
             self.rotate_image_left()
-        elif event.keysym == "Right":
+        if event.keysym == "Right":
             self.rotate_image_right()
-        elif event.keysym == "Up":
+        if event.keysym == "Up":
             self.view.increment_resize_image_slider_value()
-            # Get the current scale factor
-            # scale_value = self.view.get_scale_value()
-            # if scale_value == self.view.get_max_scale_value():
-            #     return
-            # # Update slider value
-            # self.view.set_resize_image_slider_value(scale_value)
-            # # Convert to float
-            # scale_value = float(scale_value)/100.0
-            # # Increment the scale factor
-            # scale_value += 0.1
-            # self.resize_image(scale_value)
-
-        elif event.keysym == "Down":
+        if event.keysym == "Down":
             self.view.decrement_resize_image_slider_value()
-            # Get the current scale factor
-            # scale_value = self.view.get_resize_image_slider_value()
-            # if scale_value == self.view.get_min_scale_value():
-            #     return
-            # # Update slider value
-            # self.view.set_resize_image_slider_value(scale_value)
-            # # Convert to float
-            # scale_value = float(scale_value)/100.0
-            # # Decrement the scale factor
-            # scale_value -= 0.1
-            # self.resize_image(scale_value)
-            # self.resize_image()
-
         if event.keysym.lower() == "o" and event.state & CONTROL_KEY_STATE:
             self.load_image()
-        elif event.keysym.lower() == "s" and event.state & CONTROL_KEY_STATE:
+        if event.keysym.lower() == "s" and event.state & CONTROL_KEY_STATE:
             self.save_image()
         if event.keysym == "c" or event.keysym == "C":
             self.crop_image()
-        elif event.keysym.lower() == "q" and event.state & CONTROL_KEY_STATE:
+        if event.keysym.lower() == "q" and event.state & CONTROL_KEY_STATE:
             self.quit_app()
