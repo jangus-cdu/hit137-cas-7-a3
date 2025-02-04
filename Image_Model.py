@@ -285,9 +285,18 @@ class ImageModel:
         return None
 
     # Crops the image.
-    def crop_image(self, x, y, width, height) -> ImageTk.PhotoImage:
+    def crop_image(self, start_x, start_y, end_x, end_y):
         # Crop image logic
-        pass
+        self.edited_image = self.image[start_y: end_y, start_x: end_x].copy()
+
+    def get_edited_image(self):
+        """
+        Gets the edited image object.
+ 
+        Returns
+        ImageTk.PhotoImage: The edited image object or None if no image is loaded.
+        """
+        return self.edited_image        
 
     # Resizes the image.
     def resize_image(self, width, height):
