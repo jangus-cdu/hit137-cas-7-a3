@@ -319,13 +319,6 @@ class ImageView:
         print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
-        print("ImageView.open_image_file(): Opening file dialog...")
-        print(f"ImageView.open_image_file(): Start path: {start_path}")
-        file_path = filedialog.askopenfilename(
-            initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
-        print(f"Image_View.open_file(): Selected file: {file_path}")
-        return file_path
-
     def display_image(self, image):
         """
         Displays the image in the original image frame.
