@@ -43,17 +43,20 @@ class ImageController:
         Binds UI events to the corresponding controller methods.
         """
         self.view.open_image_button.config(command=self.load_image)
-        self.view.save_image_button.config(command=self.save_image)
+        self.view.save_image_button.config(command=self.save_edited_image)
         self.view.crop_image_button.config(command=self.crop_image)
         self.view.resize_image_slider.config(command=self.on_scale_change)
         self.view.rotate_image_left_button.config(
             command=self.rotate_image_left)
         self.view.rotate_image_right_button.config(
             command=self.rotate_image_right)
+        self.view.reset_image_button.config(command=self.reset_image)
         self.view.root.bind("<Control-o>", self.handle_key_press)
         self.view.root.bind("<Control-O>", self.handle_key_press)
         self.view.root.bind("<Control-s>", self.handle_key_press)
         self.view.root.bind("<Control-S>", self.handle_key_press)
+        self.view.root.bind("<Control-r>", self.handle_key_press)
+        self.view.root.bind("<Control-R>", self.handle_key_press)
         self.view.root.bind("<Control-q>", self.handle_key_press)
         self.view.root.bind("<Control-Q>", self.handle_key_press)
         self.view.root.bind("<Left>", self.handle_key_press)
@@ -108,10 +111,21 @@ class ImageController:
         scale_factor = scale_value/100.0
         self.resize_image(scale_factor)
 
-    def save_image(self):
+    def save_edited_image(self):
         # Handle saving image
         print("Saving image")
-        pass
+        initial_dir = self.model.get_edited_image_dir()
+        initial_file = self.model.get_edited_image_name()
+        image_path = self.view.save_edited_image(initial_dir, initial_file)
+        self.model.save_edited_image(image_path)
+
+    def reset_image(self):
+        # Reset all image edits
+        print("Resetting image")
+        self.view.set_resize_image_slider_value(100)
+        self.model.reset_image()
+        image = self.model.get_tk_photoimage()
+        self.view.display_image(image)
 
     def quit_app(self):
         # Quit the application
@@ -121,10 +135,10 @@ class ImageController:
     def crop_image(self):
         """
         Handles cropping the current image.
- 
+
         Sets the crop coordinates in the model and crops the image.
         The cropped image is then displayed in the view.
- 
+
         Returns:
             None
         """
@@ -192,8 +206,10 @@ class ImageController:
         if event.keysym.lower() == "o" and event.state & CONTROL_KEY_STATE:
             self.load_image()
         if event.keysym.lower() == "s" and event.state & CONTROL_KEY_STATE:
-            self.save_image()
+            self.save_edited_image()
         if event.keysym == "c" or event.keysym == "C":
             self.crop_image()
+        if event.keysym.lower() == "r" and event.state & CONTROL_KEY_STATE:
+            self.reset_image()
         if event.keysym.lower() == "q" and event.state & CONTROL_KEY_STATE:
             self.quit_app()
