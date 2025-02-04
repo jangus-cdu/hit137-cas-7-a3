@@ -151,9 +151,10 @@ class ImageModel:
         if self.image is None:
             return None  # No image loaded yet
         # Convert edited_image in opencv format to pil image
-        pil_img = self.opencv_to_pil(self.edited_image)
-        tk_img = ImageTk.PhotoImage(pil_img)
-        pil_img = None  # Clean up unsued image
+        # pil_img = self.opencv_to_pil(self.edited_image)
+        # tk_img = ImageTk.PhotoImage(pil_img)
+        # pil_img = None  # Clean up unsued image
+        tk_img = self.get_edited_scaled_image_as_tk()
         return tk_img
 
     def get_tk_photoimage(self):
@@ -193,7 +194,7 @@ class ImageModel:
 
         # Convert to PhotoImage type
         tk_img = ImageTk.PhotoImage(resz_img)
-        # Clean up unsued images
+        # Clean up unused images
         pil_img = None
         resz_img = None
         return tk_img

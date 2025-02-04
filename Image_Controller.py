@@ -94,11 +94,16 @@ class ImageController:
         """
         print("Scaling image")
         # print(f"ImageController.on_scale_change(): Scaling image by: {value}")
+        # Set a step size for the slider control
+        step_size = 1.0
+        # Snap to the nearest step
+        stepped_value = round(float(value) / step_size) * step_size
         # Convert value returned from the slider control from text value to a float fractional value
+
         self.view.resize_image_slider_value_label.config(
-            text=f"Scale factor: {value}%"
+            text=f"Scale factor: {stepped_value}%"
         )
-        scale_value = float(value)
+        scale_value = float(stepped_value)
         # Convert the slider value to a scale factor
         scale_factor = scale_value/100.0
         self.resize_image(scale_factor)
