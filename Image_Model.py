@@ -146,6 +146,8 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The edited scaled image object in PhotoImage format.
         """
+        if self.image is None:
+            return None  # No image loaded yet
         # Convert edited_image in opencv format to pil image
         pil_img = self.opencv_to_pil(self.edited_image)
         # No need for scale operation if scale_factor == 1
@@ -180,6 +182,8 @@ class ImageModel:
         Returns
         ImageTk.PhotoImage: The loaded image object in PhotoImage format.
         """
+        if self.image is None:
+            return None  # No image loaded yet
         return self.opencv_to_tk(self.image)
 
     def opencv_to_pil(self, image):
@@ -248,6 +252,7 @@ class ImageModel:
     # Saves the edited image to the given path.
     def save_image(self, path):
         # Save image logic
+        print(f"ImageModel.save_image(): Saving image to: {path}")
         pass
 
     def set_crop_coords(self, start_x, start_y, end_x, end_y):

@@ -49,6 +49,18 @@ class ImageController:
             command=self.rotate_image_left)
         self.view.rotate_image_right_button.config(
             command=self.rotate_image_right)
+        self.view.root.bind("<Control-o>", self.handle_key_press)
+        self.view.root.bind("<Control-O>", self.handle_key_press)
+        self.view.root.bind("<Control-s>", self.handle_key_press)
+        self.view.root.bind("<Control-S>", self.handle_key_press)
+        self.view.root.bind("<Control-q>", self.handle_key_press)
+        self.view.root.bind("<Control-Q>", self.handle_key_press)
+        self.view.root.bind("<Left>", self.handle_key_press)
+        self.view.root.bind("<Right>", self.handle_key_press)
+        self.view.root.bind("<Up>", self.handle_key_press)
+        self.view.root.bind("<Down>", self.handle_key_press)
+        self.view.root.bind("<c>", self.handle_key_press)
+        self.view.root.bind("<C>", self.handle_key_press)
         self.view.quit_button.config(command=self.quit_app)
 
     def load_image(self):
@@ -110,26 +122,9 @@ class ImageController:
     def rotate_image_left(self):
         # Handle rotating image left
         print("Rotating image left")
-        # Rotate image anti-clockwise 90 degrees
-        # current_angle = self.model.get_rotation_angle()
-        # if current_angle - 90 < -360:
-        #     new_angle = current_angle - 90 + 360
-        # elif current_angle - 90 == -360:
-        #     new_angle = 0
-        # else:
-        #     new_angle = current_angle - 90
-        # self.model.set_rotation_angle(new_angle)
-        # self.model.set_rotation_angle(-90)
-        # Get the rotated image from the model - image in opencv format
+        # Rotate image counter-clockwise 90 degrees
         self.model.rotate_image(-90)
         tk_img = self.model.get_edited_image_as_tk()
-
-        # Convert edited_image in opencv format to pil image
-        # pil_img = self.model.opencv_to_pil(edit_image)
-        # Convert the rotated image to tkinter photo format
-        # tk_img = ImageTk.PhotoImage(pil_img)
-
-        # tk_img = self.model.opencv_to_tk(edit_image)
         # Update the view with the edited image
         self.view.update_edited_image(tk_img)
 
@@ -137,20 +132,34 @@ class ImageController:
         # Handle rotating image right
         print("Rotating image right")
         # Rotate image clockwise 90 degrees
-        # current_angle = self.model.get_rotation_angle()
-        # if current_angle + 90 > 360:
-        #     new_angle = current_angle + 90 - 360
-        # elif current_angle + 90 == 360:
-        #     new_angle = 0
-        # else:
-        #     new_angle = current_angle + 90
-        # self.model.set_rotation_angle(new_angle)
-        # Get the rotated image from the model - image in opencv format
-        # rotated_image = self.model.get_edited_image()
-        # Convert the rotated image to tkinter photo format
-        # tk_img = self.model.opencv_to_tk(rotated_image)
         self.model.rotate_image(90)
         tk_img = self.model.get_edited_image_as_tk()
         # Update the view with the edited image
         self.view.update_edited_image(tk_img)
         pass
+
+    def handle_key_press(self, event):
+        # Handle key press events
+        print(f"ImageController.handle_key_press(): Key pressed: "
+              f"char: {event.char}, keycode: ({event.keycode}), "
+              f"keysym: {event.keysym}, State: {event.state}")
+        # Control key event state = 0x0004
+        CONTROL_KEY_STATE = 0x0004
+        if event.keysym == "Left":
+            self.rotate_image_left()
+        elif event.keysym == "Right":
+            self.rotate_image_right()
+        elif event.keysym == "Up":
+            # self.resize_image()
+            pass
+        elif event.keysym == "Down":
+            # self.resize_image()
+            pass
+        if event.keysym.lower() == "o" and event.state & CONTROL_KEY_STATE:
+            self.load_image()
+        elif event.keysym.lower() == "s" and event.state & CONTROL_KEY_STATE:
+            self.save_image()
+        if event.keysym == "c" or event.keysym == "C":
+            self.crop_image()
+        elif event.keysym.lower() == "q" and event.state & CONTROL_KEY_STATE:
+            self.quit_app()

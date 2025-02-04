@@ -102,12 +102,31 @@ class ImageView:
         self.end_y = None  # End y coordinate on mouse release
         self.rect = None
 
-        # Buttons
+        # Control Frame Buttons
         self.open_image_button = None  # Button to open a file.
         self.save_image_button = None  # Button to save the image.
         self.crop_image_button = None  # Button to crop the image.
-        self.rotate_image_button = None  # Button to rotate the image.
+        self.rotate_image_left_button = None  # Button to rotate the image.
+        self.rotate_image_right_button = None  # Button to rotate the image.
         self.quit_button = None  # Button to quit the application.
+
+        # Control Frame Labels
+        self.KEYBOARD_SHORTCUTS_TEXT = f"Keyboard Shortcuts:\n" \
+            f"Control-O: Open\n" \
+            f"Control-S: Save\n" \
+            f"Control-Q: Quit\n" \
+            f"Left Arrow: Rotate Left\n" \
+            f"Right Arrow: Rotate Right\n" \
+            f"Up Arrow: Expand Image Size\n" \
+            f"Down Arrow: Shrink Image Size\n" \
+            f"C: Crop Image\n"
+        self.kbd_shortcuts_label = None
+
+        # Button Icons
+        self.icon_rotate_left = None
+        self.icon_rotate_right = None
+        self.icon_rotate_left_path = "icons/rotate-left-24.png"
+        self.icon_rotate_right_path = "icons/rotate-right-24.png"
 
         # Sliders
         self.resize_image_label = None  # Label for the resize slider.
@@ -128,6 +147,9 @@ class ImageView:
         self.bottom_label_3 = None
         self.bottom_label_4 = None
         self.bottom_label_5 = None
+
+        # Load Button Icons
+        self.load_icons()
 
         # Call create widgets method
         self.create_widgets()
@@ -153,7 +175,7 @@ class ImageView:
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
-            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge")
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 6, 6))
         self.image_frame_original = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         self.image_frame_edited = ttk.Frame(
@@ -177,15 +199,25 @@ class ImageView:
             self.controls_frame, text="Save Image")
         self.crop_image_button = ttk.Button(
             self.controls_frame, text="Crop Image")
-        self.rotate_image_left_button = ttk.Button(
-            self.controls_frame, text="Rotate Image Left")
-        self.rotate_image_right_button = ttk.Button(
-            self.controls_frame, text="Rotate Image Right")
+        if self.icon_rotate_left == None:
+            button_text = "Rotate Image Left"
+        else:
+            button_text = ""
+        self.rotate_image_left_button = tk.Button(
+            self.controls_frame, image=self.icon_rotate_left, text=button_text)
+        if self.icon_rotate_right == None:
+            button_text = "Rotate Image Right"
+        else:
+            button_text = ""
+        self.rotate_image_right_button = tk.Button(
+            self.controls_frame, image=self.icon_rotate_right, text=button_text)
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
         self.quit_button = ttk.Button(
             self.controls_frame, text="QUIT", style='Quit.TButton')
-
+        self.kbd_shortcuts_label = ttk.Label(
+            self.controls_frame, text=self.KEYBOARD_SHORTCUTS_TEXT
+        )
         # Create Sliders
         self.resize_image_label = ttk.Label(
             self.controls_frame, text="Resize Image")
@@ -193,14 +225,23 @@ class ImageView:
             self.controls_frame, from_=0, to=100, orient="horizontal")
 
         # Layout Control Frame Widgets
-        self.open_image_button.grid(row=0)
-        self.save_image_button.grid(row=1)
-        self.crop_image_button.grid(row=2)
-        self.resize_image_label.grid(row=3)
-        self.resize_image_slider.grid(row=4)
-        self.rotate_image_left_button.grid(row=5, column=0)
-        self.rotate_image_right_button.grid(row=5, column=1)
-        self.quit_button.grid(row=6)
+        self.open_image_button.grid(
+            row=0, column=0, columnspan=2, sticky="nsew")
+        self.save_image_button.grid(
+            row=1, column=0, columnspan=2, sticky="nsew")
+        self.crop_image_button.grid(
+            row=2, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_label.grid(
+            row=3, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider.grid(
+            row=4, column=0, columnspan=2, sticky="nsew")
+        self.rotate_image_left_button.grid(
+            row=5, column=0, rowspan=2, sticky="nsew", ipadx=3, ipady=3)
+        self.rotate_image_right_button.grid(
+            row=5, column=1,  rowspan=2, sticky="nsew", ipadx=3, ipady=3)
+        self.quit_button.grid(row=7, column=0, columnspan=2, sticky="nsew")
+        self.kbd_shortcuts_label.grid(
+            row=8, column=0, columnspan=2, sticky="nsew")
 
         # Create Image Frame Widgets
         self.image_original_title = ttk.Label(
@@ -251,6 +292,9 @@ class ImageView:
         self.content_frame.rowconfigure(0, weight=1)
         self.content_frame.rowconfigure(1, weight=0)
         self.content_frame.rowconfigure(2, weight=0)
+
+        # self.controls_frame.columnconfigure(0, weight=1)
+        # self.controls_frame.rowconfigure(5, weight=1)
 
         self.bottom_frame.columnconfigure(0, weight=0)
         self.bottom_frame.columnconfigure(1, weight=1)
@@ -365,7 +409,7 @@ class ImageView:
         This method is used to finalize the cropping rectangle.
 
         Parameters
-        event (tk.Event): 
+        event (tk.Event):
             The event object containing the mouse release coordinates.
 
         Returns
@@ -404,3 +448,20 @@ class ImageView:
     def update_image(self, image):
         # Update displayed image
         pass
+
+    def load_icons(self):
+        # Load icons
+        print(f"ImageView.load_icons(): Loading icons...")
+        # Load images using Pillow
+        try:
+            image = Image.open(self.icon_rotate_left_path)
+            self.icon_rotate_left = ImageTk.PhotoImage(image)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            self.icon_rotate_left = None
+        try:
+            image = Image.open(self.icon_rotate_right_path)
+            self.icon_rotate_right = ImageTk.PhotoImage(image)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            self.icon_rotate_right = None
