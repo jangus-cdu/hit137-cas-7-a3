@@ -340,6 +340,9 @@ class ImageView:
                                          height=image.height())
 
         # Reset the canvas and display the image
+        # Clear the current stored image so it can be garbage collected and
+        # free up memory
+        self.image_canvas_original.image = None
         self.image_canvas_original.delete("all")
         self.image_canvas_original.config(width=image.width(),
                                           height=image.height())
@@ -433,6 +436,9 @@ class ImageView:
         print(f"ImageView.update_edited_image():Displaying image: {image}")
         print(f"image.width(): {image.width()}, "
               f"image.height(): {image.height()}")
+        # Clear the current stored image so it can be garbage collected and
+        # free up memory
+        self.image_label_edited.image = None
         self.image_frame_edited.config(width=image.width(),
                                        height=image.height())
         self.image_label_edited.configure(image=image)
