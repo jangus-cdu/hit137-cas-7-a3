@@ -121,19 +121,24 @@ class ImageController:
     def crop_image(self):
         """
         Handles cropping the current image.
-
+ 
         Sets the crop coordinates in the model and crops the image.
         The cropped image is then displayed in the view.
-
+ 
         Returns:
             None
         """
         print("Cropping image")
-        self.model.set_crop_coords(
+        # Handle cropping image
+        # Crop coodinates are read from the view
+        self.model.crop_image(
             self.view.start_x, self.view.start_y, self.view.end_x, self.view.end_y)
-        cropped_image = self.model.get_cropped_image()
-        if cropped_image:
-            self.view.update_edited_image(cropped_image)
+        # Get the cropped image from the model - image in opencv format
+        cropped_image = self.model.get_edited_image()
+        # Convert the cropped image to tkinter format
+        edited_image = self.model.opencv_to_tk(cropped_image)
+        # Update the view with the edited image
+        self.view.update_edited_image(edited_image)
 
     def resize_image(self, scale_factor):
         # Handle resizing image
