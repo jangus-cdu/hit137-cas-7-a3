@@ -152,25 +152,8 @@ class ImageModel:
             return None  # No image loaded yet
         # Convert edited_image in opencv format to pil image
         pil_img = self.opencv_to_pil(self.edited_image)
-        # No need for scale operation if scale_factor == 1
-        # if not self.scale_factor == 1.0:
-        #     pil_img = self.opencv_to_pil(self.edited_image)
-        #     # Calculate scaled dimensions from stored scale_factor
-        #     scaled_width = int(pil_img.width * self.scale_factor)
-        #     scaled_height = int(pil_img.height * self.scale_factor)
-        #     # Create a copy of the scaled image
-        #     pil_img = pil_img.resize((scaled_width, scaled_height))
-
-        # No need for rotation operation if rotation_angle == 0
-        # if not self.rotation_angle == 0:
-        # Rotate the image
-        # rotate_img = self.rotate_image(self.rotation_angle)
-        # pil_img = self.opencv_to_pil(rotate_img)
-        # pil_img = pil_img.rotate(self.rotation_angle)
-
-        # Convert the edited image to tkinter photo format
-        # tk_img = self.opencv_to_tk(self.edited_image)
         tk_img = ImageTk.PhotoImage(pil_img)
+        pil_img = None  # Clean up unsued image
         return tk_img
 
     def get_tk_photoimage(self):
@@ -210,6 +193,9 @@ class ImageModel:
 
         # Convert to PhotoImage type
         tk_img = ImageTk.PhotoImage(resz_img)
+        # Clean up unsued images
+        pil_img = None
+        resz_img = None
         return tk_img
 
     def opencv_to_pil(self, image):
@@ -248,6 +234,7 @@ class ImageModel:
             return None
         pil_image = self.opencv_to_pil(image)
         tk_image = ImageTk.PhotoImage(image=pil_image)
+        pil_image = None  # Clean up unused image
         return tk_image
 
     def is_opencv_image(self, image):
@@ -388,9 +375,7 @@ class ImageModel:
         # Rotate image
         self.edited_image = cv2.warpAffine(
             img, rotation_matrix, (bound_width, bound_height), flags=cv2.INTER_NEAREST)
-
-        # Update edited image
-        # self.edited_image = rotated_image.copy()
+        img = None  # Clean up unsued image
 
         # Get rotated image dimensions
         (rh, rw) = self.edited_image.shape[:2]

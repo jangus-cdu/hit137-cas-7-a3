@@ -131,6 +131,11 @@ class ImageView:
         # Sliders
         self.resize_image_label = None  # Label for the resize slider.
         self.resize_image_slider = None  # Slider to resize the edited image.
+        # Label for the slider value.
+        self.resize_image_slider_value_label = None
+        self.MAX_RESIZE_VALUE = 150
+        self.MIN_RESIZE_VALUE = 25
+        self.DEFAULT_RESIZE_VALUE = 100
 
         # Image View Labels
         self.image_original_title = None  # Indicates Original Image Frame
@@ -222,7 +227,10 @@ class ImageView:
         self.resize_image_label = ttk.Label(
             self.controls_frame, text="Resize Image")
         self.resize_image_slider = ttk.Scale(
-            self.controls_frame, from_=0, to=100, orient="horizontal")
+            self.controls_frame, from_=self.MIN_RESIZE_VALUE, to=self.MAX_RESIZE_VALUE, orient="horizontal")
+        self.resize_image_slider.set(self.DEFAULT_RESIZE_VALUE)
+        self.resize_image_slider_value_label = ttk.Label(
+            self.controls_frame, text=f"Scale factor: {self.DEFAULT_RESIZE_VALUE}%")
 
         # Layout Control Frame Widgets
         self.open_image_button.grid(
@@ -235,10 +243,12 @@ class ImageView:
             row=3, column=0, columnspan=2, sticky="nsew")
         self.resize_image_slider.grid(
             row=4, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider_value_label.grid(
+            row=5, column=0, columnspan=2, sticky="nsew")
         self.rotate_image_left_button.grid(
-            row=5, column=0, rowspan=2, sticky="nsew", ipadx=3, ipady=3)
+            row=6, column=0, sticky="nsew", ipadx=3, ipady=3)
         self.rotate_image_right_button.grid(
-            row=5, column=1,  rowspan=2, sticky="nsew", ipadx=3, ipady=3)
+            row=6, column=1, sticky="nsew", ipadx=3, ipady=3)
         self.quit_button.grid(row=7, column=0, columnspan=2, sticky="nsew")
         self.kbd_shortcuts_label.grid(
             row=8, column=0, columnspan=2, sticky="nsew")
@@ -464,3 +474,29 @@ class ImageView:
         except Exception as e:
             print(f"Error loading image: {e}")
             self.icon_rotate_right = None
+
+    def get_max_scale_value(self):
+        return self.MAX_RESIZE_VALUE
+
+    def get_min_scale_value(self):
+        return self.MIN_RESIZE_VALUE
+
+    def get_resize_image_slider_value(self):
+        return self.image_resize_slider.get()
+
+    def set_resize_image_slider_value(self, value):
+        self.image_resize_slider.set(value)
+
+    def increment_resize_image_slider_value(self):
+        current_value = self.resize_image_slider.get()
+        new_value = int(current_value) + 1
+        if new_value > self.MAX_RESIZE_VALUE:
+            new_value = self.MAX_RESIZE_VALUE
+        self.resize_image_slider.set(new_value)
+
+    def decrement_resize_image_slider_value(self):
+        current_value = self.resize_image_slider.get()
+        new_value = int(current_value) - 1
+        if new_value < self.MIN_RESIZE_VALUE:
+            new_value = self.MIN_RESIZE_VALUE
+        self.resize_image_slider.set(new_value)
