@@ -95,7 +95,7 @@ class ImageController:
         Returns:
             None
         """
-        print("Scaling image")
+        # DEBUG print("Scaling image")
         # print(f"ImageController.on_scale_change(): Scaling image by: {value}")
         # Set a step size for the slider control
         step_size = 1.0
@@ -113,7 +113,7 @@ class ImageController:
 
     def save_edited_image(self):
         # Handle saving image
-        print("Saving image")
+        # DEBUG print("Saving image")
         initial_dir = self.model.get_edited_image_dir()
         initial_file = self.model.get_edited_image_name()
         image_path = self.view.save_edited_image(initial_dir, initial_file)
@@ -121,7 +121,7 @@ class ImageController:
 
     def reset_image(self):
         # Reset all image edits
-        print("Resetting image")
+        # DEBUG print("Resetting image")
         self.view.set_resize_image_slider_value(100)
         self.model.reset_image()
         image = self.model.get_tk_photoimage()
@@ -129,7 +129,7 @@ class ImageController:
 
     def quit_app(self):
         # Quit the application
-        print("Quitting application")
+        # DEBUG print("Quitting application")
         self.view.root.destroy()
 
     def crop_image(self):
@@ -142,7 +142,7 @@ class ImageController:
         Returns:
             None
         """
-        print("Cropping image")
+        # DEBUG print("Cropping image")
         # Handle cropping image
         # Crop coodinates are read from the view
         self.model.crop_image(
@@ -156,7 +156,7 @@ class ImageController:
 
     def resize_image(self, scale_factor):
         # Handle resizing image
-        print("Resizing image")
+        # DEBUG print("Resizing image")
         # Set the model scale factor
         self.model.set_scale_factor(scale_factor)
         # Get the scaled image as a PhotoImage
@@ -166,12 +166,12 @@ class ImageController:
 
     def set_window_size(self):
         # Handle setting window size
-        print("Setting window size")
+        # DEBUG print("Setting window size")
         pass
 
     def rotate_image_left(self):
         # Handle rotating image left
-        print("Rotating image left")
+        # DEBUG print("Rotating image left")
         # Rotate image counter-clockwise 90 degrees
         self.model.rotate_image(-90)
         tk_img = self.model.get_edited_image_as_tk()
@@ -180,7 +180,7 @@ class ImageController:
 
     def rotate_image_right(self):
         # Handle rotating image right
-        print("Rotating image right")
+        # DEBUG print("Rotating image right")
         # Rotate image clockwise 90 degrees
         self.model.rotate_image(90)
         tk_img = self.model.get_edited_image_as_tk()
@@ -190,9 +190,9 @@ class ImageController:
 
     def handle_key_press(self, event):
         # Handle key press events
-        print(f"ImageController.handle_key_press(): Key pressed: "
-              f"char: {event.char}, keycode: ({event.keycode}), "
-              f"keysym: {event.keysym}, State: {event.state}")
+        # DEBUG print(f"ImageController.handle_key_press(): Key pressed: "
+        #   f"char: {event.char}, keycode: ({event.keycode}), "
+        #   f"keysym: {event.keysym}, State: {event.state}")
         # Control key event state = 0x0004
         CONTROL_KEY_STATE = 0x0004
         if event.keysym == "Left":
