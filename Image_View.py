@@ -85,14 +85,13 @@ class ImageView:
         self.root = root  # The main Tkinter window.
         self.root.title("Main Window - ImageView")
         self.main_window_width = 600  # Width of the main window.
-        self.main_window_height = 500  # Height of the main window.
+        self.main_window_height = 450  # Height of the main window.
 
         # Main Window Frames
         self.content_frame = None
         self.controls_frame = None  # Frame for control buttons.
         self.image_frame_orignal = None  # Frame for the original image.
         self.image_frame_edited = None  # Frame for the deited image.
-        self.bottom_frame = None  # Bottom Frame for displaying various info.
 
         # Image Edit Canvas
         self.image_canvas_original = None  # Canvas for editing the image.
@@ -112,7 +111,8 @@ class ImageView:
         self.quit_button = None  # Button to quit the application.
 
         # Control Frame Labels
-        self.KEYBOARD_SHORTCUTS_TEXT = f"Keyboard Shortcuts:\n" \
+        self.KEYBOARD_SHORTCUTS_TEXT = \
+            f"Keyboard Shortcuts:\n" \
             f"Control-O: Open\n" \
             f"Control-S: Save\n" \
             f"Control-R: Reset\n" \
@@ -147,14 +147,6 @@ class ImageView:
         self.image_edited_title = None  # Indicates Edited Image Frame
         self.image_edited_label = None  # Holds Edited image.
 
-        # Status bar labels
-        self.bottom_label_0 = None
-        self.bottom_label_1 = None
-        self.bottom_label_2 = None
-        self.bottom_label_3 = None
-        self.bottom_label_4 = None
-        self.bottom_label_5 = None
-
         # Load Button Icons
         self.load_icons()
 
@@ -168,19 +160,18 @@ class ImageView:
         """
         Initializes and places all the widgets in the main window.
         """
+        # Set initial window size
         self.root.config(width=self.main_window_width,
                          height=self.main_window_height, bg="skyblue")
-
-        self.root.minsize(int(self.main_window_width),
-                          # Minimum window size
-                          int(self.main_window_height))
+        # Set minimum window size
+        self.root.minsize(self.main_window_width, self.main_window_height)
 
         # Create content frame
         self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
-            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 6, 6))
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 3, 3))
         self.image_frame_original = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         self.image_frame_edited = ttk.Frame(
@@ -195,7 +186,7 @@ class ImageView:
             row=0, column=1, columnspan=3,  sticky="nsew")
         self.image_frame_edited.grid(
             row=0, column=4,  columnspan=3, sticky="nsew")
-        self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
+        # self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
 
         # Create buttons
         self.open_image_button = ttk.Button(
@@ -272,30 +263,7 @@ class ImageView:
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
         self.image_edited_title.grid(row=0, sticky="w")
-        # self.image_label_edited.grid(row=1, sticky="nsew")
         self.image_label_edited.grid(row=1)
-
-        # Create Bottom Frame Widgets
-        self.bottom_label_0 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 0")
-        self.bottom_label_1 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 1")
-        self.bottom_label_2 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 2")
-        self.bottom_label_3 = tk.Label(
-            self.bottom_frame, text="Bottom Label 3")
-        self.bottom_label_4 = tk.Label(
-            self.bottom_frame, text="Bottom Label 4")
-        self.bottom_label_5 = tk.Label(
-            self.bottom_frame, text="Bottom Label 5")
-
-        # Layout Bottom Frame Widgets
-        self.bottom_label_0.grid(row=0, column=0, sticky="w")
-        self.bottom_label_1.grid(row=0, column=1)
-        self.bottom_label_2.grid(row=0, column=4)
-        self.bottom_label_3.grid(row=1, column=0, sticky="w")
-        self.bottom_label_4.grid(row=1, column=1)
-        self.bottom_label_5.grid(row=1, column=4)
 
         # Set resizing priorities
         self.root.columnconfigure(0, weight=1)
@@ -307,15 +275,6 @@ class ImageView:
         self.content_frame.rowconfigure(1, weight=0)
         self.content_frame.rowconfigure(2, weight=0)
 
-        # self.controls_frame.columnconfigure(0, weight=1)
-        # self.controls_frame.rowconfigure(5, weight=1)
-
-        self.bottom_frame.columnconfigure(0, weight=0)
-        self.bottom_frame.columnconfigure(1, weight=1)
-        self.bottom_frame.columnconfigure(4, weight=1)
-
-    # Open a file dialog to select an image file
-
     def open_image_file(self, start_path="/") -> str:
         """
         Opens a file dialog to select an image file and returns the file path.
@@ -326,6 +285,7 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
+        # Open a file dialog to select an image file
         file_path = filedialog.askopenfilename(
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
         return file_path
@@ -498,6 +458,9 @@ class ImageView:
         self.resize_image_slider.set(value)
 
     def increment_resize_image_slider_value(self):
+        """
+        Increments the resize image slider value by 1.
+        """
         current_value = self.resize_image_slider.get()
         new_value = int(current_value) + 1
         if new_value > self.MAX_RESIZE_VALUE:
@@ -505,6 +468,9 @@ class ImageView:
         self.resize_image_slider.set(new_value)
 
     def decrement_resize_image_slider_value(self):
+        """
+        Decrements the resize image slider value by 1.
+        """
         current_value = self.resize_image_slider.get()
         new_value = int(current_value) - 1
         if new_value < self.MIN_RESIZE_VALUE:
