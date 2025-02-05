@@ -91,7 +91,7 @@ class ImageModel:
         Returns
         None
         """
-        # # DEBUG print(f"ImageModel.set_image_path(): Setting image path to: {path}")
+        # DEBUG print(f"ImageModel.set_image_path(): Setting image path to: {path}")
         self.image_path = path
         self.image_dir = os.path.dirname(self.image_path)
 
@@ -258,7 +258,7 @@ class ImageModel:
         None if the input image is not a valid OpenCV image.
         """
         if not self.is_opencv_image(image):
-            # DEBUG print("Input image is not a valid OpenCV image.")
+            print("Input image is not a valid OpenCV image.")
             return None
         # OpenCV uses BGR format, PIL uses RGB
         color_coverted = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -278,7 +278,7 @@ class ImageModel:
         None if the input image is not a valid OpenCV image.
         """
         if not self.is_opencv_image(image):
-            # DEBUG print("Input image is not a valid OpenCV image.")
+            print("Input image is not a valid OpenCV image.")
             return None
         pil_image = self.opencv_to_pil(image)
         tk_image = ImageTk.PhotoImage(image=pil_image)
@@ -389,8 +389,6 @@ class ImageModel:
     def rotate_image(self, angle):
         # Rotate image logic
         # angle is the amount to rotate the image by
-        # TODO: Image seems to rotate in opposite direction to rotation angle
-        # Need to fix so +90 deg rotates cw, -90 deg rotates ccw
         if angle == 0:
             return  # No rotation required
         # Set the stored rotation of the image
