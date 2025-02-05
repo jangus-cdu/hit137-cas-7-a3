@@ -26,8 +26,22 @@ class ImageModel:
         The original image object.
     edited_image (OpenCV image):
         The edited image object.
+    edited_image_dir (str): 
+        Directory of the edited image file.
+    edited_image_path (str): 
+        Path to the edited image file.
+    edited_image_name (str): 
+        Save the name of the edited image.
+    crop_coords (tuple): 
+        Coordinates for cropping the image.
+    rotation_angle (int): 
+        Angle for rotating the image.
+    scale_factor (float): 
+        Factor for scaling the image
 
     Methods
+    __init__():
+        Initializes the ImageModel object.
     set_image_path(path):
         Sets the path to the image file.
     get_image_path():
@@ -51,8 +65,6 @@ class ImageModel:
     crop_image(x, y, width, height):
         Crops the image.
         Returns the cropped image.
-    resize_image(width, height):
-        Resizes the image.
     rotate_image(angle):
         Rotates the image.
     """
@@ -357,11 +369,6 @@ class ImageModel:
         ImageTk.PhotoImage: The edited image object or None if no image is loaded.
         """
         return self.edited_image
-
-    # Resizes the image.
-    def resize_image(self, width, height):
-        # Resize image logic
-        pass
 
     def set_rotation_angle(self, angle):
         # Set rotation angle
