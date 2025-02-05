@@ -328,11 +328,11 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        print("ImageView.open_image_file(): Opening file dialog...")
-        print(f"ImageView.open_image_file(): Start path: {start_path}")
+        # DEBUG print("ImageView.open_image_file(): Opening file dialog...")
+        # DEBUG print(f"ImageView.open_image_file(): Start path: {start_path}")
         file_path = filedialog.askopenfilename(
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
-        print(f"Image_View.open_file(): Selected file: {file_path}")
+        # DEBUG print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def save_edited_image(self, initial_dir, initial_file) -> str:
@@ -345,9 +345,9 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        print("ImageView.save_edited_image(): Opening file save dialog...")
+        # DEBUG print("ImageView.save_edited_image(): Opening file save dialog...")
         # initial_dir = self.model.get_edited_image_dir()
-        print(f"ImageView.save_edited_image(): Start path: {initial_dir}")
+        # DEBUG print(f"ImageView.save_edited_image(): Start path: {initial_dir}")
         if initial_dir == None:
             initial_dir = "/"
         if initial_file == None:
@@ -360,7 +360,7 @@ class ImageView:
             initialfile=initial_file,
             title="Save file",
         )
-        print(f"Image_View.open_file(): Selected file: {file_path}")
+        # DEBUG print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def display_image(self, image):
@@ -374,9 +374,9 @@ class ImageView:
         Returns
         None
         """
-        print(f"ImageView.display_image():Displaying image: {image}")
-        print(f"image.width(): {image.width()}, "
-              f"image.height(): {image.height()}")
+        # DEBUG print(f"ImageView.display_image():Displaying image: {image}")
+        # DEBUG print(f"image.width(): {image.width()}, "
+        #   f"image.height(): {image.height()}")
         # Resize the window to fit the image
         self.content_frame.config(width=self.main_window_width,
                                   height=self.main_window_height)
@@ -419,8 +419,8 @@ class ImageView:
         It captures the mouse coordinates and marks the start of the selection area.
         The selection area is shown as a red rectangle on the canvas.
         """
-        print(f"ImageView.on_mouse_press(): Mouse clicked at: "
-              f"{event.x}, {event.y}")
+        # DEBUG print(f"ImageView.on_mouse_press(): Mouse clicked at: "
+        #   f"{event.x}, {event.y}")
         self.start_x = event.x
         self.start_y = event.y
         if self.rect:
@@ -456,8 +456,8 @@ class ImageView:
         None
         """
 
-        print(f"ImageView.on_mouse_release(): Mouse released at: "
-              f"{event.x}, {event.y}")
+        # DEBUG print(f"ImageView.on_mouse_release(): Mouse released at: "
+        #   f"{event.x}, {event.y}")
         self.end_x = event.x
         self.end_y = event.y
 
@@ -477,9 +477,9 @@ class ImageView:
         """
         # print(
         # f"ImageView.update_edited_image(): Updating edited image: {image}")
-        print(f"ImageView.update_edited_image():Displaying image: {image}")
-        print(f"image.width(): {image.width()}, "
-              f"image.height(): {image.height()}")
+        # DEBUG print(f"ImageView.update_edited_image():Displaying image: {image}")
+        # DEBUG print(f"image.width(): {image.width()}, "
+        #   f"image.height(): {image.height()}")
         # Clear the current stored image so it can be garbage collected and
         # free up memory
         self.image_label_edited.image = None
@@ -494,7 +494,7 @@ class ImageView:
 
     def load_icons(self):
         # Load icons
-        print(f"ImageView.load_icons(): Loading icons...")
+        # DEBUG print(f"ImageView.load_icons(): Loading icons...")
         # Load images using Pillow
         try:
             image = Image.open(self.icon_rotate_left_path)
