@@ -141,7 +141,6 @@ class ImageController:
             None
         """
         # Reset all image edits
-        # DEBUG print("Resetting image")
         self.view.set_resize_image_slider_value(100)
         self.model.reset_image()
         image = self.model.get_tk_photoimage()
@@ -189,11 +188,6 @@ class ImageController:
         tk_img = self.model.get_edited_scaled_image_as_tk()
         # Update the view with the scaled image
         self.view.update_edited_image(tk_img)
-
-    # def set_window_size(self):
-    #     # Handle setting window size
-    #     # DEBUG print("Setting window size")
-    #     pass
 
     def rotate_image_left(self):
         # Handle rotating image left
