@@ -378,6 +378,15 @@ class ImageModel:
         return self.rotation_angle
 
     def rotate_image(self, angle):
+        """
+        Rotates the image.
+
+        Parameters
+        angle (int): The angle to rotate the image by.
+
+        Returns
+        None
+        """
         # Rotate image logic
         # angle is the amount to rotate the image by
         if angle == 0:
@@ -426,6 +435,15 @@ class ImageModel:
         self.scale_factor = 1.0
 
     def save_edited_image(self, image_path):
+        """
+        Handles saving the current edited image to the file system.
+
+        Parameters
+        image_path (str): The path to save the edited image to.
+
+        Returns
+        None
+        """
         # Save edited image logic
         self.set_edited_image_dir(os.path.dirname(image_path))
         self.set_edited_image_name(os.path.basename(image_path))
