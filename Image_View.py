@@ -14,85 +14,74 @@ from PIL import Image, ImageTk
 
 class ImageView:
     """
-    A class to represent the main window for image viewing and editing using Tkinter.
+    ImageView class represents the main window for image viewing and editing using Tkinter.
+    The ImageView class is responsible for displaying the user interface and
+    handling user input. It interacts with the Model and Controller to display
+    data and receive user input.
 
-    Attributes
-    root : Tk
-        The main Tkinter window.
-    main_window_width : int
-        Width of the main window.
-    main_window_height : int
-        Height of the main window.
-    controls_frame : Frame
-        Frame for control buttons.
-    image_frame_original : Canvas
-        Frame for the original image.
-    image_frame_edited : Frame
-        Frame for the edited image.
-    bottom_frame : Frame
-        Bottom frame for displaying various info.
-    open_image_button : Button
-        Button to open a file.
-    save_image_button : Button
-        Button to save the image.
-    crop_image_button : Button
-        Button to crop the image.
-    resize_image_slider : Scale
-        Slider to resize the edited image.
-    rotate_image_button : Button
-        Button to rotate the image.
-    quit_button : Button
-        Button to quit the application.
-    image_original_title : Label
-        Label indicating the original image frame.
-    image_canvas_original : Canvas
-        Canvas for displaying and editing the original image.
-    image_edited_title : Label
-        Label indicating the edited image frame.
-    image_edited_label : Label
-        Label holding the edited image.
-    image_path : str
-        Path to the image file.
-    bottom_label_0 : Label
-        Status bar label 0.
-    bottom_label_1 : Label
-        Status bar label 1.
-    bottom_label_2 : Label
-        Status bar label 2.
-    bottom_label_3 : Label
-        Status bar label 3.
-    bottom_label_4 : Label
-        Status bar label 4.
-    bottom_label_5 : Label
-        Status bar label 5.
+    Attributes:
+        root (tk.Tk): The main Tkinter window.
+        main_window_width (int): The width of the main window.
+        main_window_height (int): The height of the main window.
+        content_frame (ttk.Frame): The main content frame.
+        controls_frame (ttk.Frame): The frame for control buttons.
+        image_frame_original (ttk.Frame): The frame for the original image.
+        image_frame_edited (ttk.Frame): The frame for the edited image.
+        image_canvas_original (tk.Canvas): The canvas for editing the image.
+        start_x (int): The x coordinate on mouse click.
+        start_y (int): The y coordinate on mouse click.
+        end_x (int): The x coordinate on mouse release.
+        end_y (int): The y coordinate on mouse release.
+        rect (tk.Canvas): The rectangle drawn on the canvas.
+        open_image_button (ttk.Button): The button to open a file.
+        save_image_button (ttk.Button): The button to save the image.
+        crop_image_button (ttk.Button): The button to crop the image.
+        rotate_image_left_button (tk.Button): The button to rotate the image left.
+        rotate_image_right_button (tk.Button): The button to rotate the image right.
+        reset_image_button (ttk.Button): The button to reset the image.
+        quit_button (ttk.Button): The button to quit the application.
+        kbd_shortcuts_label (ttk.Label): The label for keyboard shortcuts.
+        icon_rotate_left (ttk.Button): The button to rotate the image left.
+        icon_rotate_right (ttk.Button): The button to rotate the image right.
+        slider_scale (ttk.Scale): The scale for image size.
+        slider_label (ttk.Label): The label for image size.
 
-    Methods
-    create_widgets():
-        Initializes and places widgets in the main window.
-    display_image(image):
-        Displays the given image in the original image frame.
-    open_image_file(start_path="/") -> str:
-        Opens a file dialog to select an image file and returns the file path.
-    update_edited_image(image):
-        Updates the edited image frame with the given image.
-    update_image(image):
-        Updates the displayed image.
-    bind_mouse_events():
-        Binds mouse events to the image editing canvas.
+    Methods:
+        __init__(self, root): Initializes the ImageView class.
+        create_widgets():
+            Initializes and places widgets in the main window.
+        open_image_file(self, start_path="/"): 
+            Opens a file dialog to select an image file and returns the file path.
+        save_edited_image(self, initial_dir, initial_file): 
+            Opens a file dialog to select an image file and returns the file path.
+        display_image(image):
+            Displays the given image in the original image frame.
+        bind_mouse_events(self): Binds mouse events to the canvas.
+        on_mouse_press(self, event): Handles mouse press event.
+        on_mouse_drag(self, event): Handles mouse drag event.
+        on_mouse_release(self, event): Handles mouse release event.
+        update_edited_image(self, image): 
+            Updates the edited image in the edited image frame.
+        load_icons(self): Loads icon images for the application.
+        get_max_scale_value(self): Returns the maximum value for the scale.
+        get_min_scale_value(self): Returns the minimum value for the scale.
+        get_resize_image_slider_value(self): Returns the current value of the scale.
+        set_resize_image_slider_value(self, value): Sets the value of the scale.
+        increment_resize_image_slider_value(self): Increments the value of the scale.
+        decrement_resize_image_slider_value(self): Decrements the value of the scale.
     """
 
     def __init__(self, root):
         self.root = root  # The main Tkinter window.
         self.root.title("Main Window - ImageView")
         self.main_window_width = 600  # Width of the main window.
-        self.main_window_height = 500  # Height of the main window.
+        self.main_window_height = 450  # Height of the main window.
 
         # Main Window Frames
         self.content_frame = None
         self.controls_frame = None  # Frame for control buttons.
         self.image_frame_orignal = None  # Frame for the original image.
         self.image_frame_edited = None  # Frame for the deited image.
-        self.bottom_frame = None  # Bottom Frame for displaying various info.
 
         # Image Edit Canvas
         self.image_canvas_original = None  # Canvas for editing the image.
@@ -112,7 +101,8 @@ class ImageView:
         self.quit_button = None  # Button to quit the application.
 
         # Control Frame Labels
-        self.KEYBOARD_SHORTCUTS_TEXT = f"Keyboard Shortcuts:\n" \
+        self.KEYBOARD_SHORTCUTS_TEXT = \
+            f"Keyboard Shortcuts:\n" \
             f"Control-O: Open\n" \
             f"Control-S: Save\n" \
             f"Control-R: Reset\n" \
@@ -147,14 +137,6 @@ class ImageView:
         self.image_edited_title = None  # Indicates Edited Image Frame
         self.image_edited_label = None  # Holds Edited image.
 
-        # Status bar labels
-        self.bottom_label_0 = None
-        self.bottom_label_1 = None
-        self.bottom_label_2 = None
-        self.bottom_label_3 = None
-        self.bottom_label_4 = None
-        self.bottom_label_5 = None
-
         # Load Button Icons
         self.load_icons()
 
@@ -168,21 +150,18 @@ class ImageView:
         """
         Initializes and places all the widgets in the main window.
         """
+        # Set initial window size
         self.root.config(width=self.main_window_width,
                          height=self.main_window_height, bg="skyblue")
+        # Set minimum window size
+        self.root.minsize(self.main_window_width, self.main_window_height)
 
-        self.root.minsize(int(self.main_window_width),
-                          # Minimum window size
-                          int(self.main_window_height))
-        # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
-        # self.root.attributes('-topmost', 1) # Place window on top of all others
-        # tkinter columconfigure and rowconfigure
-        # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
+        # Create content frame
         self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
         self.controls_frame = ttk.Frame(
-            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 6, 6))
+            self.content_frame, width=200, height=400, borderwidth=3, relief="ridge", padding=(3, 3, 3, 3))
         self.image_frame_original = ttk.Frame(
             self.content_frame, width=400, height=400, borderwidth=3, relief="ridge")
         self.image_frame_edited = ttk.Frame(
@@ -197,7 +176,7 @@ class ImageView:
             row=0, column=1, columnspan=3,  sticky="nsew")
         self.image_frame_edited.grid(
             row=0, column=4,  columnspan=3, sticky="nsew")
-        self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
+        # self.bottom_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
 
         # Create buttons
         self.open_image_button = ttk.Button(
@@ -252,9 +231,9 @@ class ImageView:
         self.resize_image_slider_value_label.grid(
             row=6, column=0, columnspan=2, sticky="nsew")
         self.rotate_image_left_button.grid(
-            row=7, column=0, sticky="nsew")  # , ipadx=5, ipady=5)
+            row=7, column=0, sticky="nsew")
         self.rotate_image_right_button.grid(
-            row=7, column=1, sticky="nsew")  # , ipadx=5, ipady=5)
+            row=7, column=1, sticky="nsew")
         self.quit_button.grid(row=8, column=0, columnspan=2, sticky="nsew")
         self.kbd_shortcuts_label.grid(
             row=9, column=0, columnspan=2, sticky="nsew")
@@ -274,30 +253,7 @@ class ImageView:
         self.image_original_title.grid(row=0, sticky="w")
         self.image_canvas_original.grid(row=1, sticky="nsew")
         self.image_edited_title.grid(row=0, sticky="w")
-        # self.image_label_edited.grid(row=1, sticky="nsew")
         self.image_label_edited.grid(row=1)
-
-        # Create Bottom Frame Widgets
-        self.bottom_label_0 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 0")
-        self.bottom_label_1 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 1")
-        self.bottom_label_2 = ttk.Label(
-            self.bottom_frame, text="Bottom Label 2")
-        self.bottom_label_3 = tk.Label(
-            self.bottom_frame, text="Bottom Label 3")
-        self.bottom_label_4 = tk.Label(
-            self.bottom_frame, text="Bottom Label 4")
-        self.bottom_label_5 = tk.Label(
-            self.bottom_frame, text="Bottom Label 5")
-
-        # Layout Bottom Frame Widgets
-        self.bottom_label_0.grid(row=0, column=0, sticky="w")
-        self.bottom_label_1.grid(row=0, column=1)
-        self.bottom_label_2.grid(row=0, column=4)
-        self.bottom_label_3.grid(row=1, column=0, sticky="w")
-        self.bottom_label_4.grid(row=1, column=1)
-        self.bottom_label_5.grid(row=1, column=4)
 
         # Set resizing priorities
         self.root.columnconfigure(0, weight=1)
@@ -309,15 +265,6 @@ class ImageView:
         self.content_frame.rowconfigure(1, weight=0)
         self.content_frame.rowconfigure(2, weight=0)
 
-        # self.controls_frame.columnconfigure(0, weight=1)
-        # self.controls_frame.rowconfigure(5, weight=1)
-
-        self.bottom_frame.columnconfigure(0, weight=0)
-        self.bottom_frame.columnconfigure(1, weight=1)
-        self.bottom_frame.columnconfigure(4, weight=1)
-
-    # Open a file dialog to select an image file
-
     def open_image_file(self, start_path="/") -> str:
         """
         Opens a file dialog to select an image file and returns the file path.
@@ -328,11 +275,9 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        print("ImageView.open_image_file(): Opening file dialog...")
-        print(f"ImageView.open_image_file(): Start path: {start_path}")
+        # Open a file dialog to select an image file
         file_path = filedialog.askopenfilename(
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
-        print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def save_edited_image(self, initial_dir, initial_file) -> str:
@@ -345,9 +290,6 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        print("ImageView.save_edited_image(): Opening file save dialog...")
-        # initial_dir = self.model.get_edited_image_dir()
-        print(f"ImageView.save_edited_image(): Start path: {initial_dir}")
         if initial_dir == None:
             initial_dir = "/"
         if initial_file == None:
@@ -360,7 +302,6 @@ class ImageView:
             initialfile=initial_file,
             title="Save file",
         )
-        print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def display_image(self, image):
@@ -374,9 +315,6 @@ class ImageView:
         Returns
         None
         """
-        print(f"ImageView.display_image():Displaying image: {image}")
-        print(f"image.width(): {image.width()}, "
-              f"image.height(): {image.height()}")
         # Resize the window to fit the image
         self.content_frame.config(width=self.main_window_width,
                                   height=self.main_window_height)
@@ -419,8 +357,6 @@ class ImageView:
         It captures the mouse coordinates and marks the start of the selection area.
         The selection area is shown as a red rectangle on the canvas.
         """
-        print(f"ImageView.on_mouse_press(): Mouse clicked at: "
-              f"{event.x}, {event.y}")
         self.start_x = event.x
         self.start_y = event.y
         if self.rect:
@@ -455,9 +391,6 @@ class ImageView:
         Returns
         None
         """
-
-        print(f"ImageView.on_mouse_release(): Mouse released at: "
-              f"{event.x}, {event.y}")
         self.end_x = event.x
         self.end_y = event.y
 
@@ -475,11 +408,6 @@ class ImageView:
         Returns
         None
         """
-        # print(
-        # f"ImageView.update_edited_image(): Updating edited image: {image}")
-        print(f"ImageView.update_edited_image():Displaying image: {image}")
-        print(f"image.width(): {image.width()}, "
-              f"image.height(): {image.height()}")
         # Clear the current stored image so it can be garbage collected and
         # free up memory
         self.image_label_edited.image = None
@@ -488,14 +416,15 @@ class ImageView:
         self.image_label_edited.configure(image=image)
         self.image_label_edited.image = image
 
-    def update_image(self, image):
-        # Update displayed image
-        pass
+    # def update_image(self, image):
+    #     # Update displayed image
+    #     pass
 
     def load_icons(self):
-        # Load icons
-        print(f"ImageView.load_icons(): Loading icons...")
-        # Load images using Pillow
+        """
+        Loads icon images for the application.
+        """
+        # Load icon images using Pillow
         try:
             image = Image.open(self.icon_rotate_left_path)
             self.icon_rotate_left = ImageTk.PhotoImage(image)
@@ -522,6 +451,9 @@ class ImageView:
         self.resize_image_slider.set(value)
 
     def increment_resize_image_slider_value(self):
+        """
+        Increments the resize image slider value by 1.
+        """
         current_value = self.resize_image_slider.get()
         new_value = int(current_value) + 1
         if new_value > self.MAX_RESIZE_VALUE:
@@ -529,6 +461,9 @@ class ImageView:
         self.resize_image_slider.set(new_value)
 
     def decrement_resize_image_slider_value(self):
+        """
+        Decrements the resize image slider value by 1.
+        """
         current_value = self.resize_image_slider.get()
         new_value = int(current_value) - 1
         if new_value < self.MIN_RESIZE_VALUE:
