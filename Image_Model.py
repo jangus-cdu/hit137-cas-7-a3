@@ -77,8 +77,6 @@ class ImageModel:
         Returns
         str: The path to the image file.
         """
-        # DEBUG print(f"ImageModel.get_image_path(): Returning image path: "
-        #   f"{self.image_path}")
         return self.image_path
 
     def set_image_path(self, path):
@@ -91,7 +89,6 @@ class ImageModel:
         Returns
         None
         """
-        # DEBUG print(f"ImageModel.set_image_path(): Setting image path to: {path}")
         self.image_path = path
         self.image_dir = os.path.dirname(self.image_path)
 
@@ -102,8 +99,6 @@ class ImageModel:
         Returns
         str: The directory of the image file.
         """
-        # DEBUG print(f"ImageModel.get_image_dir(): Returning image directory: "
-        #   f"{self.image_dir}")
         return self.image_dir
 
     def get_edited_image_path(self):
@@ -135,7 +130,6 @@ class ImageModel:
         ImageTk.PhotoImage: The loaded image object.
         """
         # Load image logic
-        # DEBUG print(f"ImageModel.load_image(): Loading image from: {image_path}")
         # Set edited image path to loaded image path by default
         self.set_edited_image_dir(os.path.dirname(image_path))
         self.image = cv2.imread(image_path)
@@ -148,7 +142,6 @@ class ImageModel:
         Returns
         OpenCV image: The loaded image object.
         """
-        # DEBUG print(f"ImageModel.get_image(): Returning image: {self.image}")
         return self.image
 
     def get_edited_image(self):
@@ -171,10 +164,6 @@ class ImageModel:
         """
         if self.image is None:
             return None  # No image loaded yet
-        # Convert edited_image in opencv format to pil image
-        # pil_img = self.opencv_to_pil(self.edited_image)
-        # tk_img = ImageTk.PhotoImage(pil_img)
-        # pil_img = None  # Clean up unsued image
         tk_img = self.get_edited_scaled_image_as_tk()
         return tk_img
 
@@ -313,7 +302,6 @@ class ImageModel:
     # Saves the edited image to the given path.
     def save_image(self, path):
         # Save image logic
-        # DEBUG print(f"ImageModel.save_image(): Saving image to: {path}")
         pass
 
     def set_crop_coords(self, start_x, start_y, end_x, end_y):
@@ -377,10 +365,6 @@ class ImageModel:
 
     def set_rotation_angle(self, angle):
         # Set rotation angle
-        # DEBUG print(f"ImageModel.set_rotation_angle(): current angle: {
-        #   self.rotation_angle}")
-        # DEBUG print(
-        # f"ImageModel.set_rotation_angle(): Setting rotation angle to: {angle}")
         self.rotation_angle = angle
 
     def get_rotation_angle(self):
@@ -396,16 +380,9 @@ class ImageModel:
         if self.rotation_angle < 0:
             self.rotation_angle += 360
 
-        # DEBUG print(f"ImageModel.rotate_image() - angle: {angle}")
-        # DEBUG print(
-            # f"ImageModel.rotate_image() - self.rotation_angle: {self.rotation_angle}")
-
         img = self.edited_image.copy()
         # Get current image dimensions
         height, width = img.shape[:2]
-        # DEBUG print(
-        # f"ImageModel.rotate_image() - edited_image dimensions: w: {width}, h: {height}")
-        # Calculate Centre coordinates
         image_centre = (width // 2, height // 2)
         # Get rotation matrix - Positive values mean counter-clockwise rotation.
         # Convert standard angle - 0 to +360 in clockwise direction to opposite
@@ -420,8 +397,6 @@ class ImageModel:
         # Find the new width and height bounds of the rotated image
         bound_width = int((height * rotated_sin) + (width * rotated_cos))
         bound_height = int((height * rotated_cos) + (width * rotated_sin))
-        # DEBUG print(f"ImageModel.rotate_image() - bound_width: {
-        #   bound_width}, bound_height: {bound_height}")
 
         # Re-centre the image within the new bounds
         rotation_matrix[0, 2] += bound_width / 2 - image_centre[0]
@@ -434,8 +409,6 @@ class ImageModel:
 
         # Get rotated image dimensions
         (rh, rw) = self.edited_image.shape[:2]
-        # DEBUG print(
-        # f"ImageModel.rotate_image() - rotated_image dimensions: w: {rw}, h: {rh}")
 
     def reset_image(self):
         # Reset all image edits
@@ -447,8 +420,6 @@ class ImageModel:
 
     def save_edited_image(self, image_path):
         # Save edited image logic
-        # DEBUG print(f"ImageModel.save_edited_image(): Saving edited image to: {
-        # image_path}")
         self.set_edited_image_dir(os.path.dirname(image_path))
         self.set_edited_image_name(os.path.basename(image_path))
         self.set_edited_image_path(image_path)
