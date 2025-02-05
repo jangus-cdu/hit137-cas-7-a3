@@ -174,10 +174,8 @@ class ImageView:
         self.root.minsize(int(self.main_window_width),
                           # Minimum window size
                           int(self.main_window_height))
-        # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
-        # self.root.attributes('-topmost', 1) # Place window on top of all others
-        # tkinter columconfigure and rowconfigure
-        # https://stackoverflow.com/questions/21893288/tkinter-columconfigure-and-rowconfigure
+
+        # Create content frame
         self.content_frame = ttk.Frame(self.root, padding=(3, 3, 12, 12))
 
         # Create main frames - using grid layout for frame and widget placement
@@ -328,11 +326,8 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        # DEBUG print("ImageView.open_image_file(): Opening file dialog...")
-        # DEBUG print(f"ImageView.open_image_file(): Start path: {start_path}")
         file_path = filedialog.askopenfilename(
             initialdir=start_path, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"), ("all files", "*.*")))
-        # DEBUG print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def save_edited_image(self, initial_dir, initial_file) -> str:
@@ -345,9 +340,6 @@ class ImageView:
         Returns
         str: The file path of the selected image.
         """
-        # DEBUG print("ImageView.save_edited_image(): Opening file save dialog...")
-        # initial_dir = self.model.get_edited_image_dir()
-        # DEBUG print(f"ImageView.save_edited_image(): Start path: {initial_dir}")
         if initial_dir == None:
             initial_dir = "/"
         if initial_file == None:
@@ -360,7 +352,6 @@ class ImageView:
             initialfile=initial_file,
             title="Save file",
         )
-        # DEBUG print(f"Image_View.open_file(): Selected file: {file_path}")
         return file_path
 
     def display_image(self, image):
@@ -374,9 +365,6 @@ class ImageView:
         Returns
         None
         """
-        # DEBUG print(f"ImageView.display_image():Displaying image: {image}")
-        # DEBUG print(f"image.width(): {image.width()}, "
-        #   f"image.height(): {image.height()}")
         # Resize the window to fit the image
         self.content_frame.config(width=self.main_window_width,
                                   height=self.main_window_height)
@@ -419,8 +407,6 @@ class ImageView:
         It captures the mouse coordinates and marks the start of the selection area.
         The selection area is shown as a red rectangle on the canvas.
         """
-        # DEBUG print(f"ImageView.on_mouse_press(): Mouse clicked at: "
-        #   f"{event.x}, {event.y}")
         self.start_x = event.x
         self.start_y = event.y
         if self.rect:
@@ -455,9 +441,6 @@ class ImageView:
         Returns
         None
         """
-
-        # DEBUG print(f"ImageView.on_mouse_release(): Mouse released at: "
-        #   f"{event.x}, {event.y}")
         self.end_x = event.x
         self.end_y = event.y
 
@@ -475,11 +458,6 @@ class ImageView:
         Returns
         None
         """
-        # print(
-        # f"ImageView.update_edited_image(): Updating edited image: {image}")
-        # DEBUG print(f"ImageView.update_edited_image():Displaying image: {image}")
-        # DEBUG print(f"image.width(): {image.width()}, "
-        #   f"image.height(): {image.height()}")
         # Clear the current stored image so it can be garbage collected and
         # free up memory
         self.image_label_edited.image = None
@@ -493,9 +471,7 @@ class ImageView:
         pass
 
     def load_icons(self):
-        # Load icons
-        # DEBUG print(f"ImageView.load_icons(): Loading icons...")
-        # Load images using Pillow
+        # Load icon images using Pillow
         try:
             image = Image.open(self.icon_rotate_left_path)
             self.icon_rotate_left = ImageTk.PhotoImage(image)
