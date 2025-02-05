@@ -14,71 +14,61 @@ from PIL import Image, ImageTk
 
 class ImageView:
     """
-    A class to represent the main window for image viewing and editing using Tkinter.
+    ImageView class represents the main window for image viewing and editing using Tkinter.
+    The ImageView class is responsible for displaying the user interface and
+    handling user input. It interacts with the Model and Controller to display
+    data and receive user input.
 
-    Attributes
-    root : Tk
-        The main Tkinter window.
-    main_window_width : int
-        Width of the main window.
-    main_window_height : int
-        Height of the main window.
-    controls_frame : Frame
-        Frame for control buttons.
-    image_frame_original : Canvas
-        Frame for the original image.
-    image_frame_edited : Frame
-        Frame for the edited image.
-    bottom_frame : Frame
-        Bottom frame for displaying various info.
-    open_image_button : Button
-        Button to open a file.
-    save_image_button : Button
-        Button to save the image.
-    crop_image_button : Button
-        Button to crop the image.
-    resize_image_slider : Scale
-        Slider to resize the edited image.
-    rotate_image_button : Button
-        Button to rotate the image.
-    quit_button : Button
-        Button to quit the application.
-    image_original_title : Label
-        Label indicating the original image frame.
-    image_canvas_original : Canvas
-        Canvas for displaying and editing the original image.
-    image_edited_title : Label
-        Label indicating the edited image frame.
-    image_edited_label : Label
-        Label holding the edited image.
-    image_path : str
-        Path to the image file.
-    bottom_label_0 : Label
-        Status bar label 0.
-    bottom_label_1 : Label
-        Status bar label 1.
-    bottom_label_2 : Label
-        Status bar label 2.
-    bottom_label_3 : Label
-        Status bar label 3.
-    bottom_label_4 : Label
-        Status bar label 4.
-    bottom_label_5 : Label
-        Status bar label 5.
+    Attributes:
+        root (tk.Tk): The main Tkinter window.
+        main_window_width (int): The width of the main window.
+        main_window_height (int): The height of the main window.
+        content_frame (ttk.Frame): The main content frame.
+        controls_frame (ttk.Frame): The frame for control buttons.
+        image_frame_original (ttk.Frame): The frame for the original image.
+        image_frame_edited (ttk.Frame): The frame for the edited image.
+        image_canvas_original (tk.Canvas): The canvas for editing the image.
+        start_x (int): The x coordinate on mouse click.
+        start_y (int): The y coordinate on mouse click.
+        end_x (int): The x coordinate on mouse release.
+        end_y (int): The y coordinate on mouse release.
+        rect (tk.Canvas): The rectangle drawn on the canvas.
+        open_image_button (ttk.Button): The button to open a file.
+        save_image_button (ttk.Button): The button to save the image.
+        crop_image_button (ttk.Button): The button to crop the image.
+        rotate_image_left_button (tk.Button): The button to rotate the image left.
+        rotate_image_right_button (tk.Button): The button to rotate the image right.
+        reset_image_button (ttk.Button): The button to reset the image.
+        quit_button (ttk.Button): The button to quit the application.
+        kbd_shortcuts_label (ttk.Label): The label for keyboard shortcuts.
+        icon_rotate_left (ttk.Button): The button to rotate the image left.
+        icon_rotate_right (ttk.Button): The button to rotate the image right.
+        slider_scale (ttk.Scale): The scale for image size.
+        slider_label (ttk.Label): The label for image size.
 
-    Methods
-    create_widgets():
-        Initializes and places widgets in the main window.
-    display_image(image):
-        Displays the given image in the original image frame.
-    open_image_file(start_path="/") -> str:
-        Opens a file dialog to select an image file and returns the file path.
-    update_edited_image(image):
-        Updates the edited image frame with the given image.
-    update_image(image):
-        Updates the displayed image.
-    bind_mouse_events():
-        Binds mouse events to the image editing canvas.
+    Methods:
+        __init__(self, root): Initializes the ImageView class.
+        create_widgets():
+            Initializes and places widgets in the main window.
+        open_image_file(self, start_path="/"): 
+            Opens a file dialog to select an image file and returns the file path.
+        save_edited_image(self, initial_dir, initial_file): 
+            Opens a file dialog to select an image file and returns the file path.
+        display_image(image):
+            Displays the given image in the original image frame.
+        bind_mouse_events(self): Binds mouse events to the canvas.
+        on_mouse_press(self, event): Handles mouse press event.
+        on_mouse_drag(self, event): Handles mouse drag event.
+        on_mouse_release(self, event): Handles mouse release event.
+        update_edited_image(self, image): 
+            Updates the edited image in the edited image frame.
+        load_icons(self): Loads icon images for the application.
+        get_max_scale_value(self): Returns the maximum value for the scale.
+        get_min_scale_value(self): Returns the minimum value for the scale.
+        get_resize_image_slider_value(self): Returns the current value of the scale.
+        set_resize_image_slider_value(self, value): Sets the value of the scale.
+        increment_resize_image_slider_value(self): Increments the value of the scale.
+        decrement_resize_image_slider_value(self): Decrements the value of the scale.
     """
 
     def __init__(self, root):
@@ -241,9 +231,9 @@ class ImageView:
         self.resize_image_slider_value_label.grid(
             row=6, column=0, columnspan=2, sticky="nsew")
         self.rotate_image_left_button.grid(
-            row=7, column=0, sticky="nsew")  # , ipadx=5, ipady=5)
+            row=7, column=0, sticky="nsew")
         self.rotate_image_right_button.grid(
-            row=7, column=1, sticky="nsew")  # , ipadx=5, ipady=5)
+            row=7, column=1, sticky="nsew")
         self.quit_button.grid(row=8, column=0, columnspan=2, sticky="nsew")
         self.kbd_shortcuts_label.grid(
             row=9, column=0, columnspan=2, sticky="nsew")
@@ -426,11 +416,14 @@ class ImageView:
         self.image_label_edited.configure(image=image)
         self.image_label_edited.image = image
 
-    def update_image(self, image):
-        # Update displayed image
-        pass
+    # def update_image(self, image):
+    #     # Update displayed image
+    #     pass
 
     def load_icons(self):
+        """
+        Loads icon images for the application.
+        """
         # Load icon images using Pillow
         try:
             image = Image.open(self.icon_rotate_left_path)
