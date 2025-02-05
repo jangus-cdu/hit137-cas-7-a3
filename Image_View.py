@@ -84,8 +84,8 @@ class ImageView:
     def __init__(self, root):
         self.root = root  # The main Tkinter window.
         self.root.title("Main Window - ImageView")
-        self.main_window_width = 800  # Width of the main window.
-        self.main_window_height = 600  # Height of the main window.
+        self.main_window_width = 600  # Width of the main window.
+        self.main_window_height = 500  # Height of the main window.
 
         # Main Window Frames
         self.content_frame = None
@@ -171,9 +171,9 @@ class ImageView:
         self.root.config(width=self.main_window_width,
                          height=self.main_window_height, bg="skyblue")
 
-        self.root.minsize(int(self.main_window_width/2),
+        self.root.minsize(int(self.main_window_width),
                           # Minimum window size
-                          int(self.main_window_height/2))
+                          int(self.main_window_height))
         # self.root.iconbitmap('./assets/app.ico') # Set a custom app icon
         # self.root.attributes('-topmost', 1) # Place window on top of all others
         # tkinter columconfigure and rowconfigure
@@ -206,6 +206,8 @@ class ImageView:
             self.controls_frame, text="Save Image")
         self.crop_image_button = ttk.Button(
             self.controls_frame, text="Crop Image")
+        self.reset_image_button = ttk.Button(
+            self.controls_frame, text="Reset Image")
         if self.icon_rotate_left == None:
             button_text = "Rotate Image Left"
         else:
@@ -218,8 +220,6 @@ class ImageView:
             button_text = ""
         self.rotate_image_right_button = tk.Button(
             self.controls_frame, image=self.icon_rotate_right, text=button_text)
-        self.reset_image_button = ttk.Button(
-            self.controls_frame, text="Reset Image")
         self.quit_style = ttk.Style()
         self.quit_style.configure('Quit.TButton', foreground='red')
         self.quit_button = ttk.Button(
@@ -243,18 +243,18 @@ class ImageView:
             row=1, column=0, columnspan=2, sticky="nsew")
         self.crop_image_button.grid(
             row=2, column=0, columnspan=2, sticky="nsew")
-        self.resize_image_label.grid(
-            row=3, column=0, columnspan=2, sticky="nsew")
-        self.resize_image_slider.grid(
-            row=4, column=0, columnspan=2, sticky="nsew")
-        self.resize_image_slider_value_label.grid(
-            row=5, column=0, columnspan=2, sticky="nsew")
-        self.rotate_image_left_button.grid(
-            row=6, column=0, sticky="nsew", ipadx=5, ipady=5)
-        self.rotate_image_right_button.grid(
-            row=6, column=1, sticky="nsew", ipadx=5, ipady=5)
         self.reset_image_button.grid(
-            row=7, column=0, columnspan=2, sticky="nsew")
+            row=3, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_label.grid(
+            row=4, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider.grid(
+            row=5, column=0, columnspan=2, sticky="nsew")
+        self.resize_image_slider_value_label.grid(
+            row=6, column=0, columnspan=2, sticky="nsew")
+        self.rotate_image_left_button.grid(
+            row=7, column=0, sticky="nsew")  # , ipadx=5, ipady=5)
+        self.rotate_image_right_button.grid(
+            row=7, column=1, sticky="nsew")  # , ipadx=5, ipady=5)
         self.quit_button.grid(row=8, column=0, columnspan=2, sticky="nsew")
         self.kbd_shortcuts_label.grid(
             row=9, column=0, columnspan=2, sticky="nsew")
